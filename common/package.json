@@ -1,6 +1,6 @@
 {
-  "name": "@domopractice/common",
-  "version": "1.0.27",
+  "name": "@domosideproject/twitter-common",
+  "version": "1.0.0",
   "description": "shared logic used by multiple services",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "del ./build/*",
     "build": "tsc",
-    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run clean && npm run build && npm publish --public-access"
+    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run clean && npm run build && npm publish --public=access"
   },
   "keywords": [],
   "author": "",
