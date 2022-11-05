@@ -48,27 +48,24 @@ const userSchema = new mongoose.Schema({
   },
   intro: {
     type: String,
-    required: true,
     default: "",
   },
   avatar: {
     type: String,
-    required: true,
     default: "",
   },
   banner: {
     type: String,
-    required: true,
     default: "",
   },
   isAdmin: {
     type: Boolean,
-    required: true,
     default: false,
   },
   version: {
     type: Number,
     required: true,
+    default: 0,
   },
 });
 
@@ -89,7 +86,7 @@ userSchema.pre("save", async function (done) {
 });
 
 userSchema.statics.build = (attrs: UserAttrs) => {
-  return new User(attrs);
+  return new User({ ...attrs, version: 0 });
 };
 
-const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
+export const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
