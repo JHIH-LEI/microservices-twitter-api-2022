@@ -17,3 +17,17 @@ spec:
                 name: users-srv
                 port:
                   number: 3000
+          - path: /api/followships/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: followships-srv
+                port:
+                  number: 3000
+          - path: /api/subscribeships/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: subscribeships-srv
+                port:
+                  number: 3000
