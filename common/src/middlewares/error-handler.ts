@@ -13,7 +13,7 @@ export const errorHandler = (
       .send({ errors: error.serializeErrors() });
   }
 
-  console.log(error);
+  console.log("error:", error);
   const errorRes = [{ message: `sth went wrong: ${JSON.stringify(error)}` }];
 
   res.status(400).send(errorRes);
