@@ -5,7 +5,7 @@ const start = async () => {
   try {
     // make sure we load all need env variables
     if (!process.env.JWT_KEY) {
-      throw new Error("missing JWT_KEY env vairable");
+      throw new Error("missing JWT_KEY env variable");
     }
 
     if (!process.env.MONGO_URI) {
