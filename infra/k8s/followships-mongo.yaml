@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: followships-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: followships-mongo
+  template:
+    metadata:
+      labels:
+        app: followships-mongo
+    spec:
+      containers:
+        - name: followships-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: followships-mongo-srv
+spec:
+  selector:
+    app: followships-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
