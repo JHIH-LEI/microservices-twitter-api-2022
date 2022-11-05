@@ -2,6 +2,11 @@ import { json } from "body-parser";
 import express from "express";
 import cookieSession from "cookie-session";
 import { newUserRouter } from "./routes/new";
+import { signinUserRouter } from "./routes/signin";
+import { updateUserRouter } from "./routes/update";
+import { signoutUserRouter } from "./routes/signout";
+import { currentUserRouter } from "./routes/current";
+
 const app = express();
 
 app.set("trust proxy", true);
@@ -14,5 +19,9 @@ app.use(
 );
 
 app.use("/api/users", newUserRouter);
+app.use("/api/users", signinUserRouter);
+app.use("/api/users", updateUserRouter);
+app.use("/api/users", signoutUserRouter);
+app.use("/api/users", currentUserRouter);
 
 export { app };
