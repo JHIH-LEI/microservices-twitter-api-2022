@@ -12,7 +12,7 @@ interface UserAttrs {
   password: string;
 }
 
-interface UserDoc extends mongoose.Document {
+export interface UserDoc extends mongoose.Document {
   name: string;
   account: string;
   email: string;
@@ -28,46 +28,58 @@ interface UserModel extends mongoose.Model<UserDoc> {
   build(attrs: UserAttrs): UserDoc;
 }
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    maxLength: 50,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      maxLength: 50,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    account: {
+      type: String,
+      required: true,
+      minLength: 4,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    intro: {
+      type: String,
+      default: "",
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    banner: {
+      type: String,
+      default: "",
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    version: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  account: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  intro: {
-    type: String,
-    default: "",
-  },
-  avatar: {
-    type: String,
-    default: "",
-  },
-  banner: {
-    type: String,
-    default: "",
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  version: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-});
+  {
+    toJSON: {
+      transform: function (doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.password;
+      },
+    },
+  }
+);
 
 userSchema.set("versionKey", "version");
 
