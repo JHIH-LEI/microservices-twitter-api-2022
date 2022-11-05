@@ -24,14 +24,11 @@ it("create new user with valid input", async () => {
     })
     .expect(201);
 
-  expect(res.body.token).toBeDefined();
-
-  const payload = verify(res.body.token, process.env.JWT_KEY!) as UserPayload;
+  expect(res.body).toBeDefined();
 
   // 檢查資料庫有沒有
   const users = await User.find({});
   expect(users.length).toEqual(1);
-  expect(payload.id).toEqual(users[0].id);
   expect(users[0].email).toEqual(email);
   expect(users[0].account).toEqual(account);
   expect(users[0].name).toEqual(name);
