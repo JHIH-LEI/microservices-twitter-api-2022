@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
-process.env.TEST_DB_URL =
-  "mysql://root:password@localhost:3306/test-micro-twitter";
-process.env.JWT_KEY = "domw";
+import * as dotenv from "dotenv";
+dotenv.config({ path: `${process.cwd()}/src/.env` });
 process.env.NODE_ENV = "test";
 
 declare global {

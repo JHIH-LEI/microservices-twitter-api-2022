@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config({ path: `${process.cwd()}/src` });
+dotenv.config({ path: `${process.cwd()}/src/.env` });
 import { json } from "body-parser";
 import express from "express";
 import cookieSession from "cookie-session";
