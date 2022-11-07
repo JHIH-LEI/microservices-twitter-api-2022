@@ -16,6 +16,7 @@ it("get top 10 user orderBy followers number", async () => {
       account: `topUser${i}`,
       avatar: "",
       name: `user${i}`,
+      version: 0,
     });
     userIds.push(user.id);
   }

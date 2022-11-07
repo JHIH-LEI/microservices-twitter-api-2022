@@ -96,6 +96,7 @@ class User extends Model<
   declare account: string; // from user:created event
   declare createdAt: Date; // from user:created event
   declare updatedAt: Date; // from user:created event
+  declare version: number; // from user:created event
 
   // pre-declare 潛在的 includes
   declare followers: NonAttribute<User[]>;
@@ -127,6 +128,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    version: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -139,6 +145,27 @@ User.init(
   {
     sequelize,
     tableName: "users",
+    hooks: {
+      beforeSave: function (user, options) {
+        const incomingVersion = user.dataValues.version;
+        // @ts-ignore
+        const preVersion = user._previousDataValues.version;
+
+        if (user.isNewRecord) {
+          user.version = 0;
+          return;
+        }
+
+        if (incomingVersion !== preVersion + 1) {
+          // 版本不符，還有其他版本要等，不許可這次更新
+          throw new Error(
+            `wrong user version:${incomingVersion}, should be: ${
+              preVersion + 1
+            }`
+          );
+        }
+      },
+    },
   }
 );
 

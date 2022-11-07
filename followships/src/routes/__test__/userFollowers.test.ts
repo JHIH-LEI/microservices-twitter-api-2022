@@ -1,7 +1,5 @@
 import request from "supertest";
 import { app } from "../../app";
-// import { Followship } from "../../models/followship";
-// import { User } from "../../models/user";
 import { db } from "../../models/index";
 const { User, Followship } = db;
 export const createUser = async (userId: number) => {
@@ -12,6 +10,7 @@ export const createUser = async (userId: number) => {
     account: `${userId}AAAAAAA`,
     createdAt: new Date(),
     updatedAt: new Date(),
+    version: 0,
   });
 };
 it("return target user followers", async () => {

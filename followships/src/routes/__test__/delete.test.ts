@@ -12,6 +12,9 @@ test("unfollow", async () => {
     name: "follower",
     avatar: "",
     account: "123456",
+    version: 0,
+  }).catch((err) => {
+    throw new Error(err);
   });
 
   const targetUser = await User.create({
@@ -21,6 +24,7 @@ test("unfollow", async () => {
     name: "following me",
     avatar: "",
     account: "2222222",
+    version: 0,
   });
 
   await Followship.create({

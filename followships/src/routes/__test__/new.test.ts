@@ -14,6 +14,7 @@ it("start follow", async () => {
       name: "follower",
       avatar: "",
       account: "12345678",
+      version: 0,
     }),
     User.create({
       id: 2,
@@ -22,6 +23,7 @@ it("start follow", async () => {
       name: "following me",
       avatar: "",
       account: "22222222",
+      version: 0,
     }),
   ]);
 
