@@ -1,7 +1,7 @@
 import { CustomError } from "./custom-error";
 
-export class DBError extends CustomError {
-  statusCode = 500;
+export class ConflictError extends CustomError {
+  statusCode = 409;
 
   constructor(message: string) {
     super(message);
@@ -10,6 +10,6 @@ export class DBError extends CustomError {
   }
 
   serializeErrors() {
-    return [{ message: `database error: ${this.message}` }];
+    return [{ message: `conflict: ${this.message}` }];
   }
 }
