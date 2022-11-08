@@ -1,5 +1,10 @@
 import express, { Request, Response } from "express";
-import { requireAuth, currentUser } from "@domosideproject/twitter-common";
+import {
+  requireAuth,
+  currentUser,
+  DBError,
+  ConflictError,
+} from "@domosideproject/twitter-common";
 // import { sequelize } from "../index";
 // import { User } from "../models/user";
 import { db } from "../models/index";
@@ -52,14 +57,12 @@ router.get(
         order: [[sequelize.col("Followings.Followship.createdAt"), "DESC"]],
       });
     } catch (err: any) {
-      // TODO: db error
       console.error("db error", err);
-      throw new Error(err);
+      throw new DBError(err);
     }
 
-    // TODO: 404
     if (users === null) {
-      throw new Error("user not exist");
+      throw new ConflictError("user not exist");
     }
 
     res.send(users);

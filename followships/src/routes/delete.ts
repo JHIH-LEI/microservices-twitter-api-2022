@@ -1,4 +1,8 @@
-import { requireAuth, currentUser } from "@domosideproject/twitter-common";
+import {
+  requireAuth,
+  currentUser,
+  DBError,
+} from "@domosideproject/twitter-common";
 import express, { Request, Response } from "express";
 import { db } from "../models/index";
 const { Followship } = db;
@@ -15,9 +19,8 @@ router.delete(
     try {
       await Followship.destroy({ where: { followingId, followerId } });
     } catch (err) {
-      // TODO: db error
       console.error(err);
-      throw new Error(`db error: ${JSON.stringify(err)}`);
+      throw new DBError(`db error: ${JSON.stringify(err)}`);
     }
     res.status(204).send("ok");
   }

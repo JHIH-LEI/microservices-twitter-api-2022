@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import { requireAuth, currentUser } from "@domosideproject/twitter-common";
 import { db } from "../models/index";
+import { ConflictError } from "../../../common/src";
+import { DBError } from "../../../common/src";
 const { User, Subscribeship } = db;
 const router = express.Router();
 
@@ -11,21 +13,20 @@ router.post(
   async (req: Request, res: Response) => {
     const subscriberId = req.currentUser!.id;
     const subscribingId = req.params.userId;
-    // TODO: conflict
+
     if (subscriberId === subscribingId) {
-      throw new Error("can not follow yourself");
+      throw new ConflictError("can not follow yourself");
     }
     // 不能追蹤不存在的用戶
     const isExistUser = await User.findByPk(subscriberId);
 
-    // TODO: throw custom error
     if (isExistUser === null) {
-      throw new Error(`can not follow not existUser user: ${subscribingId}`);
+      throw new ConflictError(
+        `can not follow not existUser user: ${subscribingId}`
+      );
     }
     // 如果event還來不及處理怎辦？
     // 不可重複追蹤
-
-    // TODO: db error
 
     try {
       await Subscribeship.findOrCreate({
@@ -33,7 +34,7 @@ router.post(
       });
     } catch (err: any) {
       console.error(err);
-      throw new Error(err);
+      throw new DBError(err);
     }
     res.status(201).send("ok");
   }

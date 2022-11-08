@@ -1,4 +1,8 @@
-import { currentUser, requireAuth } from "@domosideproject/twitter-common";
+import {
+  currentUser,
+  DBError,
+  requireAuth,
+} from "@domosideproject/twitter-common";
 import express, { Request, Response } from "express";
 // import { sequelize } from "../index";
 import { Op } from "sequelize";
@@ -16,6 +20,8 @@ export type TopUserResOne = {
   isFollowings: number;
 };
 
+// TODO: write res data type
+
 type TopUserResAll = Array<TopUserResOne>;
 
 router.get(
@@ -24,41 +30,47 @@ router.get(
   requireAuth,
   async (req: Request, res: Response) => {
     // TODO: db error
-    const users = await User.findAll({
-      raw: true,
-      nest: true,
-      group: "User.id",
-      attributes: [
-        "id",
-        "name",
-        "account",
-        "avatar",
-        [
-          sequelize.literal(
-            "(SELECT COUNT(DISTINCT id) FROM Followships WHERE followingId = User.id)"
-          ),
-          "totalFollowers",
+    let users;
+    try {
+      users = await User.findAll({
+        raw: true,
+        nest: true,
+        group: "User.id",
+        attributes: [
+          "id",
+          "name",
+          "account",
+          "avatar",
+          [
+            sequelize.literal(
+              "(SELECT COUNT(DISTINCT id) FROM Followships WHERE followingId = User.id)"
+            ),
+            "totalFollowers",
+          ],
+          [
+            sequelize.literal(
+              `EXISTS (SELECT 1 FROM Followships WHERE followerId = ${
+                req.currentUser!.id
+              } AND followingId = User.id)`
+            ),
+            "isFollowings",
+          ],
         ],
-        [
-          sequelize.literal(
-            `EXISTS (SELECT 1 FROM Followships WHERE followerId = ${
-              req.currentUser!.id
-            } AND followingId = User.id)`
-          ),
-          "isFollowings",
-        ],
-      ],
-      include: {
-        model: User,
-        as: "Followers",
-        attributes: [],
-        through: { attributes: [] },
-      },
-      order: [[sequelize.col("totalFollowers"), "DESC"]],
-      subQuery: false, //避免因查詢多張表造成limit失常
-      having: { totalFollowers: { [Op.gt]: 0 } }, //只要粉絲大於0的人
-      limit: 10,
-    });
+        include: {
+          model: User,
+          as: "Followers",
+          attributes: [],
+          through: { attributes: [] },
+        },
+        order: [[sequelize.col("totalFollowers"), "DESC"]],
+        subQuery: false, //避免因查詢多張表造成limit失常
+        having: { totalFollowers: { [Op.gt]: 0 } }, //只要粉絲大於0的人
+        limit: 10,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new DBError(error);
+    }
     res.send(users);
   }
 );
