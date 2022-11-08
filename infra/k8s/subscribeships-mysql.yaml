@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: subscribeships-mongo-depl
+  name: subscribeships-mysql-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: subscribeships-mongo
+      app: subscribeships-mysql
   template:
     metadata:
       labels:
-        app: subscribeships-mongo
+        app: subscribeships-mysql
     spec:
       containers:
-        - name: subscribeships-mongo
-          image: mongo
+        - name: subscribeships-mysql
+          image: mysql
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: subscribeships-mongo-srv
+  name: subscribeships-mysql-srv
 spec:
   selector:
-    app: subscribeships-mongo
+    app: subscribeships-mysql
   ports:
     - name: db
       protocol: TCP
-      port: 27017
-      targetPort: 27017
+      port: 8080
+      targetPort: 8080

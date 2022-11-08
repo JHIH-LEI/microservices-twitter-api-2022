@@ -21,8 +21,8 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
-            - name: MONGO_URI
-              value: "mongodb://followships-mongo-srv:27017/followships"
+            - name: TEST_DB_URL
+              value: "mysql://root:password@localhost:3306/followships-mysql-srv"
 ---
 apiVersion: v1
 kind: Service
