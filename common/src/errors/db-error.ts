@@ -6,7 +6,7 @@ export class DBError extends CustomError {
   constructor(message: string) {
     super(message);
 
-    Object.setPrototypeOf(this, CustomError.prototype);
+    Object.setPrototypeOf(this, DBError.prototype);
   }
 
   serializeErrors() {

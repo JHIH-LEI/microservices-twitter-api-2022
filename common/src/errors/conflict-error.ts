@@ -1,4 +1,5 @@
 import { CustomError } from "./custom-error";
+import { ErrorResponse } from "./type-error";
 
 export class ConflictError extends CustomError {
   statusCode = 409;
@@ -6,10 +7,10 @@ export class ConflictError extends CustomError {
   constructor(message: string) {
     super(message);
 
-    Object.setPrototypeOf(this, CustomError.prototype);
+    Object.setPrototypeOf(this, ConflictError.prototype);
   }
 
-  serializeErrors() {
+  serializeErrors(): ErrorResponse {
     return [{ message: `conflict: ${this.message}` }];
   }
 }
