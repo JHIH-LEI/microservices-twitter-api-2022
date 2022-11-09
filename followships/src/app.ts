@@ -8,6 +8,7 @@ import { followRouter } from "./routes/new";
 import { topUserRouter } from "./routes/topUser";
 import { userFollowings } from "./routes/userFollowings";
 import { userFollowers } from "./routes/userFollowers";
+import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
 
 const app = express();
 
@@ -25,5 +26,11 @@ app.use("/api/followships", userFollowers);
 app.use("/api/followships", userFollowings);
 app.use("/api/followships", followRouter);
 app.use("/api/followships", unFollowRouter);
+
+app.all("*", () => {
+  throw new NotFoundError("can not find route");
+});
+
+app.use(errorHandler);
 
 export { app };

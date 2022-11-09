@@ -5,6 +5,7 @@ import express from "express";
 import cookieSession from "cookie-session";
 import { unSubscribeRouter } from "./routes/delete";
 import { subscribeRouter } from "./routes/new";
+import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
 
 const app = express();
 
@@ -20,4 +21,9 @@ app.use(
 app.use("/api/subscribeships", subscribeRouter);
 app.use("/api/subscribeships", unSubscribeRouter);
 
+app.all("*", () => {
+  throw new NotFoundError("can not find route");
+});
+
+app.use(errorHandler);
 export { app };
