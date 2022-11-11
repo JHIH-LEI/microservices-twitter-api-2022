@@ -5,6 +5,7 @@ export abstract class Listener<E extends Event> {
   abstract queue: E["queue"];
   protected connection: amqp.Connection;
   abstract channel: amqp.Channel;
+  abstract consumeCallBack: (parsedContent: E["content"]) => Promise<void>;
 
   constructor(connection: amqp.Connection) {
     this.connection = connection;
@@ -20,9 +21,7 @@ export abstract class Listener<E extends Event> {
     return parsedContent;
   }
 
-  protected async consumeFromQueue(
-    cb: (parsedContent: E["content"]) => Promise<void>
-  ) {
+  async consumeFromQueue() {
     const outerThis = this;
     this.channel.assertQueue(this.queue);
     this.channel.consume(this.queue, async function (message) {
@@ -30,7 +29,7 @@ export abstract class Listener<E extends Event> {
         console.log("consumer cancelled by server");
       } else {
         const parsedContent = outerThis.parseContent(message.content);
-        await cb(parsedContent);
+        await outerThis.consumeCallBack(parsedContent);
         outerThis.channel.ack(message);
       }
     });
