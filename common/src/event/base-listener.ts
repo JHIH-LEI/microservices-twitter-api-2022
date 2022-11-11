@@ -5,13 +5,16 @@ export abstract class Listener<E extends Event> {
   abstract queue: E["queue"];
   protected connection: amqp.Connection;
   abstract channel: amqp.Channel;
-  abstract consumeCallBack: (parsedContent: E["content"]) => Promise<void>;
+  abstract consumeCallBack: (
+    parsedContent: E["content"],
+    message: amqp.Message
+  ) => Promise<void>;
 
   constructor(connection: amqp.Connection) {
     this.connection = connection;
   }
 
-  private parseContent(content: Buffer): string | { [key: string]: any } {
+  private parseContent(content: Buffer): E["content"] {
     let parsedContent;
     try {
       parsedContent = JSON.parse(content.toString());
@@ -29,7 +32,7 @@ export abstract class Listener<E extends Event> {
         console.log("consumer cancelled by server");
       } else {
         const parsedContent = outerThis.parseContent(message.content);
-        await outerThis.consumeCallBack(parsedContent);
+        await outerThis.consumeCallBack(parsedContent, message);
         outerThis.channel.ack(message);
       }
     });
