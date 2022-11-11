@@ -22,4 +22,5 @@ export interface NotificationCreatedContent {
     name: string;
     avatar: string;
   };
+  notifyUserIds: string[];
 }
