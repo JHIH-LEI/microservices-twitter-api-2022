@@ -3,12 +3,12 @@ import { Queue } from "./queue";
 /**
  * id is mongodb id
  */
-export interface ReplyCreatedContent {
+export interface ReplyDeletedContent {
   id: string;
   version: number;
 }
 
-export interface ReplyCreatedEvent {
+export interface ReplyDeletedEvent {
   queue: Queue.ReplyDeleted;
-  content: ReplyCreatedContent;
+  content: ReplyDeletedContent;
 }

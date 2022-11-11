@@ -9,7 +9,7 @@ export interface UserUpdatedContent {
   version: number;
 }
 
-export interface UserCreatedEvent {
+export interface UserUpdatedEvent {
   queue: Queue.UserUpdated;
   content: UserUpdatedContent;
 }
