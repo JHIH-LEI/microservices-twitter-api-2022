@@ -5,10 +5,10 @@ export abstract class Listener<E extends Event> {
   abstract queue: E["queue"];
   protected connection: amqp.Connection;
   abstract channel: amqp.Channel;
-  abstract consumeCallBack: (
+  abstract consumeCallBack(
     parsedContent: E["content"],
     message: amqp.Message
-  ) => Promise<void>;
+  ): Promise<void>;
 
   constructor(connection: amqp.Connection) {
     this.connection = connection;
