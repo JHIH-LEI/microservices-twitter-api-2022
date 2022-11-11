@@ -24,6 +24,7 @@ export abstract class Listener<E extends Event> {
     cb: (parsedContent: E["content"]) => Promise<void>
   ) {
     const outerThis = this;
+    this.channel.assertQueue(this.queue);
     this.channel.consume(this.queue, async function (message) {
       if (message === null) {
         console.log("consumer cancelled by server");
