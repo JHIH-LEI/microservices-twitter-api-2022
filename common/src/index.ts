@@ -32,6 +32,8 @@ export * from "./event/reply-deleted-event";
 export * from "./event/subscribeship-created-event";
 export * from "./event/subscribeship-deleted-event";
 export * from "./event/tweet-created-event";
+export * from "./event/tweet-updated-event";
+export * from "./event/tweet-deleted-event";
 export * from "./event/user-created-event";
 export * from "./event/user-updated-event";
 export * from "./event/types/notification";

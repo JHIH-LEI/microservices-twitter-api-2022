@@ -1,6 +1,6 @@
 {
   "name": "@domosideproject/twitter-common",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "shared logic used by multiple services",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
