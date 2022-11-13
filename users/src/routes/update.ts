@@ -53,13 +53,8 @@ router.put(
         throw new NotFoundError("can not find user");
       }
 
-      const isNotMatchPassword = !(await Password.compare({
-        storedPassword: user.password || "",
-        suppliedPassword: password,
-      }));
-
-      if (password !== checkPassword || isNotMatchPassword) {
-        throw new BadRequestError("password have sth wrong");
+      if (password && password !== checkPassword) {
+        throw new BadRequestError("password should match to checkPassword");
       }
 
       if (email && email !== user.email) {
