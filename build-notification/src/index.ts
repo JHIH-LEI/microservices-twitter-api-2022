@@ -7,6 +7,7 @@ import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
 import { TweetCreatedConsumer } from "./subscribers/tweet-created";
 import { SubscribeshipCreatedConsumer } from "./subscribers/subscribeship-created";
 import { SubscribeshipDeletedConsumer } from "./subscribers/subscribeship-deleted";
+import { LikeCreatedConsumer } from "./subscribers/like-created";
 
 let connection: amqp.Connection;
 let listenerChannel: amqp.Channel;
@@ -34,6 +35,7 @@ const start = async () => {
     new TweetCreatedConsumer(connection).consumeFromQueue();
     new SubscribeshipCreatedConsumer(connection).consumeFromQueue();
     new SubscribeshipDeletedConsumer(connection).consumeFromQueue();
+    new LikeCreatedConsumer(connection).consumeFromQueue();
   } catch (err) {
     console.error(err);
   }
