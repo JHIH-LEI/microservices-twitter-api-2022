@@ -74,7 +74,6 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    optimisticConcurrency: true,
     toJSON: {
       transform: function (doc, ret) {
         ret.id = ret._id;
