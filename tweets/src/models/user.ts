@@ -2,10 +2,13 @@ import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface UserAttrs {
+  _id: mongoose.Types.ObjectId;
   name: string;
   account: string;
   avatar: string;
   version: number;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface UserDoc extends mongoose.Document {
@@ -13,6 +16,8 @@ export interface UserDoc extends mongoose.Document {
   account: string;
   avatar: string;
   version: number;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -35,6 +40,14 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
+      require: true,
+    },
+    createdAt: {
+      type: Date,
+      require: true,
+    },
+    updatedAt: {
+      type: Date,
       require: true,
     },
   },

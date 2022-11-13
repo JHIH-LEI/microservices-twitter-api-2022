@@ -14,6 +14,8 @@ import { LikeCreatedConsumer } from "./subscribers/like-created";
 import { LikeDeletedConsumer } from "./subscribers/like-deleted";
 import { ReplyCreatedConsumer } from "./subscribers/reply-created";
 import { ReplyDeletedConsumer } from "./subscribers/reply-deleted";
+import { UserCreatedConsumer } from "./subscribers/user-created";
+import { UserUpdatedConsumer } from "./subscribers/user-updated";
 
 const app = express();
 
@@ -50,6 +52,8 @@ const setupRabbitMQ = async () => {
   await new LikeDeletedConsumer(connection).consumeFromQueue();
   await new ReplyCreatedConsumer(connection).consumeFromQueue();
   await new ReplyDeletedConsumer(connection).consumeFromQueue();
+  await new UserCreatedConsumer(connection).consumeFromQueue();
+  await new UserUpdatedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
