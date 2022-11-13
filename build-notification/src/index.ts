@@ -1,19 +1,27 @@
 import dotenv from "dotenv";
 dotenv.config({ path: `${process.cwd()}/src/.env` });
 import amqp from "amqplib";
-import Redis from "ioredis";
 import { FollowshipCreatedConsumer } from "./subscribers/followship-created";
+import Redis from "ioredis";
+import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
 
-export const redis = new Redis();
-export let connection: amqp.Connection;
-export let listenerChannel: amqp.Channel;
-export let senderChannel: amqp.Channel;
+let connection: amqp.Connection;
+let listenerChannel: amqp.Channel;
+let senderChannel: amqp.Channel;
+let redis: Redis;
 const start = async () => {
   try {
     if (!process.env.RABBITMQ_URL) {
       throw new Error("RABBITMQ_URL is required.");
     }
 
+    const url = getDBUrlBaseNodeEnv();
+
+    if (!url) {
+      throw new Error("db url is required.");
+    }
+
+    redis = new Redis(url);
     connection = await amqp.connect(process.env.RABBITMQ_URL!);
     listenerChannel = await connection.createChannel();
     senderChannel = await connection.createChannel();
@@ -26,3 +34,5 @@ const start = async () => {
 };
 
 start();
+
+export { connection, listenerChannel, senderChannel, redis };
