@@ -9,6 +9,8 @@ import { Types } from "mongoose";
 import express, { Request, Response } from "express";
 import { Tweet } from "../models/tweet";
 import { body, param } from "express-validator";
+import { TweetUpdatedPublisher } from "../publishers/tweet-updated";
+import { connection } from "../app";
 const router = express.Router();
 
 router.put(
@@ -37,6 +39,16 @@ router.put(
         `can not update tweet: ${tweetId} by user: ${loginUser}. Error possible reasons: 1. can not find tweetId or 2.trying to update other user tweet.`
       );
     }
+
+    // publish
+
+    await new TweetUpdatedPublisher(connection).publish({
+      id: updatedTweet.id.toString(),
+      version: updatedTweet.version,
+      userId: updatedTweet.userId.toString(),
+      description: updatedTweet.description,
+      updatedAt: updatedTweet.updatedAt.toISOString(),
+    });
 
     res.send("ok");
   }
