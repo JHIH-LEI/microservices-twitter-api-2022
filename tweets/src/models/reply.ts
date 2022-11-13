@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
 
 interface ReplyAttrs {
-  tweetId: mongoose.Schema.Types.ObjectId;
+  id: mongoose.Types.ObjectId;
+  tweetId: mongoose.Types.ObjectId;
+  version: number;
 }
 
 interface ReplyDoc extends mongoose.Document {
-  tweetId: mongoose.Schema.Types.ObjectId;
+  tweetId: mongoose.Types.ObjectId;
+  version: number;
 }
 
 interface ReplyModel extends mongoose.Model<ReplyDoc> {
@@ -17,6 +20,11 @@ const replySchema = new mongoose.Schema(
     tweetId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+    },
+    version: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   {
@@ -34,7 +42,11 @@ const replySchema = new mongoose.Schema(
 replySchema.set("versionKey", "version");
 
 replySchema.statics.build = (attrs: ReplyAttrs) => {
-  return new Reply(attrs);
+  return new Reply({
+    _id: attrs.id,
+    tweetId: attrs.tweetId,
+    version: attrs.version,
+  });
 };
 
 export const Reply = mongoose.model<ReplyDoc, ReplyModel>("Reply", replySchema);
