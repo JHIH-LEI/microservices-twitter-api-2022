@@ -45,4 +45,4 @@ const setupRabbitMQ = async () => {
 };
 
 setupRabbitMQ();
-export { app };
+export { app, senderChannel, listenerChannel, connection };
