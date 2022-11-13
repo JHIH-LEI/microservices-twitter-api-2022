@@ -37,3 +37,6 @@ export * from "./event/tweet-deleted-event";
 export * from "./event/user-created-event";
 export * from "./event/user-updated-event";
 export * from "./event/types/notification";
+
+// services
+export * from "./services/getDBUrlBaseNodeEnv";
