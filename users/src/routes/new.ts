@@ -2,7 +2,14 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { User } from "../models/user";
 import jsonwebtoken from "jsonwebtoken";
-import { validateRequest } from "@domosideproject/twitter-common";
+import {
+  BadRequestError,
+  DBError,
+  UserCreatedContent,
+  validateRequest,
+} from "@domosideproject/twitter-common";
+import { UserCreatedPublisher } from "../publishers/user-created";
+import { connection } from "../app";
 const router = express.Router();
 
 type PostUserRequest = {
@@ -12,7 +19,7 @@ type PostUserRequest = {
   password: string;
   checkPassword: string;
 };
-// TODO: requestValidate middleware
+
 router.post(
   "/",
   [
@@ -32,16 +39,15 @@ router.post(
     const { name, email, account, password, checkPassword } =
       req.body as PostUserRequest;
 
-    // TODO: 密碼相符
     if (password !== checkPassword) {
-      //
+      throw new BadRequestError("password should match with checkPassword");
     }
 
     const user = User.build({ name, email, password, account });
     try {
       await user.save();
-    } catch (err) {
-      // TODO: DB ERROR
+    } catch (err: any) {
+      throw new DBError(`DB error: ${err}`);
     }
 
     const userJWT = jsonwebtoken.sign({ id: user.id }, process.env.JWT_KEY!);
@@ -49,6 +55,16 @@ router.post(
     req.session = {
       jwt: userJWT,
     };
+
+    await new UserCreatedPublisher(connection).publish({
+      id: user.id,
+      name: user.name,
+      avatar: user.avatar,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+      account: user.account,
+      version: user.version,
+    });
     res.status(201).send(user);
   }
 );
