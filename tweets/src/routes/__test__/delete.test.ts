@@ -3,8 +3,9 @@ import { app } from "../../app";
 import { Types } from "mongoose";
 import { Tweet } from "../../models/tweet";
 import { User } from "../../models/user";
+import { TweetDeletedPublisher } from "../../publishers/tweet-deleted";
 
-it("return 204 by delete success", async () => {
+it("return 204 by delete success and publish to tweet:deleted queue with valid content", async () => {
   const ownerUser = await User.create({
     name: "owner",
     avatar: "ss",
@@ -20,10 +21,7 @@ it("return 204 by delete success", async () => {
     })
     .expect(201);
 
-  console.log(res.body);
   const newTweetId = res.body;
-
-  console.log("newTweetId" + JSON.stringify(newTweetId));
 
   await request(app)
     .delete(`/api/tweets/${newTweetId}`)
@@ -32,6 +30,16 @@ it("return 204 by delete success", async () => {
 
   const deleteResult = await Tweet.findById(newTweetId);
   expect(deleteResult).toBeNull();
+
+  // publish
+
+  expect(TweetDeletedPublisher).toHaveBeenCalledTimes(1);
+  const mockTweetDeletedPublisherInstance = (TweetDeletedPublisher as jest.Mock)
+    .mock.instances[0];
+  const mockPublish = mockTweetDeletedPublisherInstance.publish as jest.Mock;
+
+  expect(mockPublish).toHaveBeenCalledTimes(1);
+  expect(mockPublish).toHaveBeenCalledWith({ id: newTweetId, version: 0 });
 });
 
 // TODO: fix conflict error now it did not catch as custom error
