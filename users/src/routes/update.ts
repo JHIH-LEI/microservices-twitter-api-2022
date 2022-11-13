@@ -7,6 +7,10 @@ import { body } from "express-validator";
 import {
   requireAuth,
   currentUser,
+  ConflictError,
+  NotFoundError,
+  Forbidden,
+  BadRequestError,
   // Forbidden,
 } from "@domosideproject/twitter-common";
 import { User, UserDoc } from "../models/user";
@@ -36,7 +40,7 @@ router.put(
       const loginUserId = req.currentUser!.id;
 
       if (targetUserId !== loginUserId) {
-        // throw new Forbidden("can not modify other user file");
+        throw new Forbidden("can not modify other user file");
       }
 
       let client = new ImgurClient({ clientId: process.env.CLIENT_ID! });
@@ -45,9 +49,8 @@ router.put(
 
       const user = await User.findById(targetUserId);
 
-      // TODO: throw 404 customized error
       if (user === null) {
-        throw new Error("not exist");
+        throw new NotFoundError("can not find user");
       }
 
       const isNotMatchPassword = !(await Password.compare({
@@ -56,19 +59,18 @@ router.put(
       }));
 
       if (password !== checkPassword || isNotMatchPassword) {
-        //
+        throw new BadRequestError("password have sth wrong");
       }
-      // TODO:conflict error 確認account及email是否已被註冊
 
       if (email && email !== user.email) {
         const sameEmailUser = await User.findOne(email);
-        if (sameEmailUser) throw new Error("409");
+        if (sameEmailUser) throw new ConflictError("email already in use");
         user.email = email;
       }
 
       if (account && account !== user.account) {
-        const sameAccountUser = await User.findOne(email);
-        if (sameAccountUser) throw new Error("409");
+        const sameAccountUser = await User.findOne(account);
+        if (sameAccountUser) throw new ConflictError("account already in use");
         user.account = account;
       }
 
