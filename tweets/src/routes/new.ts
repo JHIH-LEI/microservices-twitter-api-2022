@@ -9,6 +9,8 @@ import express, { Request, Response } from "express";
 import { Tweet } from "../models/tweet";
 import { User } from "../models/user";
 import { body } from "express-validator";
+import { TweetCreatedPublisher } from "../publishers/tweet-created";
+import { connection } from "../app";
 const router = express.Router();
 
 router.post(
@@ -31,10 +33,20 @@ router.post(
     const tweet = await Tweet.create({ description, userId: creator.id }).catch(
       (err) => {
         console.error(err);
-        // TODO: DB ERROR
-        throw new Error(JSON.stringify(err));
+        throw new DBError(JSON.stringify(err));
       }
     );
+
+    await new TweetCreatedPublisher(connection).publish({
+      id: tweet.id,
+      description: tweet.description,
+      userId: tweet.userId.toString(),
+      name: creator.name,
+      avatar: creator.avatar,
+      version: tweet.version,
+      createdAt: tweet.createdAt.toISOString(),
+      updatedAt: tweet.updatedAt.toISOString(),
+    });
 
     res.status(201).send(tweet._id);
   }
