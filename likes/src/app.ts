@@ -35,6 +35,10 @@ let senderChannel: amqp.Channel;
 let listenerChannel: amqp.Channel;
 
 const setupRabbitMQ = async () => {
+  if (!process.env.RABBITMQ_URL) {
+    throw new Error("RABBITMQ_URL env is required");
+  }
+
   connection = await amqp.connect(process.env.RABBITMQ_URL!);
   listenerChannel = await connection.createChannel();
   senderChannel = await connection.createChannel();
