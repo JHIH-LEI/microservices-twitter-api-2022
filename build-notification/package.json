@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --no-cache"
+    "dev": "NODE_ENV=dev ts-node-dev src/index.ts",
+    "test": "NODE_ENV=test jest --watchAll --no-cache --detectOpenHandles"
   },
   "jest": {
     "preset": "ts-jest",
