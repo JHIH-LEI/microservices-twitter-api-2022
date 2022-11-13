@@ -1,10 +1,15 @@
-jest.mock("../index.ts");
+import { redis } from "../index";
+
 jest.mock("../publishers/notification-created");
 
-beforeEach(() => {
+beforeAll(() => {});
+
+beforeEach(async () => {
   jest.clearAllMocks();
+  await redis.flushall();
 });
 
-afterEach(() => {
+afterEach(async () => {
   jest.clearAllMocks();
+  await redis.flushall();
 });
