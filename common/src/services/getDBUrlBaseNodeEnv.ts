@@ -6,7 +6,7 @@ export enum NODEENV {
 
 /**
  *
- * process.env.NODE_ENV value can see enum NODEENV
+ * valid process.env.NODE_ENV value can see enum NODEENV
  *
  */
 export function getDBUrlBaseNodeEnv(): string | undefined {
