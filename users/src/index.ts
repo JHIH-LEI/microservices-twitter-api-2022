@@ -1,18 +1,26 @@
+import dotenv from "dotenv";
+dotenv.config({ path: `${process.cwd()}/src/.env` });
 import mongoose from "mongoose";
 import { app } from "./app";
+import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
 
 const start = async () => {
   try {
+    const mongodbURI = getDBUrlBaseNodeEnv();
     // make sure we load all need env variables
     if (!process.env.JWT_KEY) {
       throw new Error("missing JWT_KEY env variable");
     }
 
-    if (!process.env.MONGO_URI) {
-      throw new Error("missing MONGO_URI env variable");
+    if (!mongodbURI) {
+      throw new Error("missing mongodb uri plz check env variable");
     }
 
-    await mongoose.connect(process.env.MONGO_URI!);
+    if (!process.env.RABBITMQ_URL) {
+      throw new Error("missing RABBITMQ_URL env variable");
+    }
+
+    await mongoose.connect(mongodbURI);
     console.log("connected to mongodb");
 
     app.listen(3000, () => {
