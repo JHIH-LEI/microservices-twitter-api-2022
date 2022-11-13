@@ -5,10 +5,13 @@ import {
   requireAuth,
   DBError,
   validateRequest,
+  ConflictError,
 } from "@domosideproject/twitter-common";
 import { Like } from "../models/like";
 import { param } from "express-validator";
 import { Types } from "mongoose";
+import { LikeDeletedPublishers } from "../publishers/like-deleted";
+import { connection } from "../app";
 
 router.delete(
   "/:tweetId",
@@ -24,9 +27,20 @@ router.delete(
     const { tweetId } = req.params;
     const likedUserId = req.currentUser?.id;
 
-    await Like.deleteOne({ userId: likedUserId, tweetId }).catch((err) => {
+    const deletedLike = await Like.findOneAndDelete({
+      userId: likedUserId,
+      tweetId,
+    }).catch((err) => {
       console.error(err);
       throw new DBError(JSON.stringify(err));
+    });
+
+    if (deletedLike === null) {
+      throw new ConflictError("like not exist");
+    }
+
+    await new LikeDeletedPublishers(connection).publish({
+      id: deletedLike!.id,
     });
 
     res.status(204).send("ok");

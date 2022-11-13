@@ -10,6 +10,7 @@ declare global {
 }
 
 jest.mock("../publishers/like-created.ts");
+jest.mock("../publishers/like-deleted.ts");
 
 let mongoServer: MongoMemoryServer;
 
