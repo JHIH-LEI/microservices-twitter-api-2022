@@ -4,6 +4,7 @@ import amqp from "amqplib";
 import { FollowshipCreatedConsumer } from "./subscribers/followship-created";
 import Redis from "ioredis";
 import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
+import { TweetCreatedConsumer } from "./subscribers/tweet-created";
 
 let connection: amqp.Connection;
 let listenerChannel: amqp.Channel;
@@ -28,6 +29,7 @@ const start = async () => {
 
     // subscribers:
     new FollowshipCreatedConsumer(connection).consumeFromQueue();
+    new TweetCreatedConsumer(connection).consumeFromQueue();
   } catch (err) {
     console.error(err);
   }
