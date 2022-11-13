@@ -9,6 +9,7 @@ import { updateTweetRouter } from "./routes/update";
 import { deleteTweetRouter } from "./routes/delete";
 import { newTweetRouter } from "./routes/new";
 import { indexTweetRouter } from "./routes/index";
+import amqp from "amqplib";
 
 const app = express();
 
@@ -32,4 +33,15 @@ app.all("*", () => {
 });
 
 app.use(errorHandler);
-export { app };
+
+let connection: amqp.Connection;
+let channel: amqp.Channel;
+
+const setupRabbitMQ = async () => {
+  connection = await amqp.connect(process.env.RABBITMQ_URL!);
+  channel = await connection.createChannel();
+};
+
+setupRabbitMQ();
+
+export { app, connection, channel };
