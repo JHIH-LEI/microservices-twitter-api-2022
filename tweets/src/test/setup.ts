@@ -11,6 +11,7 @@ declare global {
 
 jest.mock("../publishers/tweet-created.ts");
 jest.mock("../publishers/tweet-deleted.ts");
+jest.mock("../publishers/tweet-updated.ts");
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
