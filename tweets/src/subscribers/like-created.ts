@@ -1,4 +1,5 @@
 import {
+  DBError,
   LikeCreatedEvent,
   Listener,
   Queue,
@@ -25,6 +26,8 @@ export class LikeCreatedConsumer extends Listener<LikeCreatedEvent> {
       createdAt: new Date(createdAt),
     });
 
-    await like.save();
+    await like.save().catch((err: any) => {
+      throw new DBError(`add new like error: ${JSON.stringify(err)}`);
+    });
   }
 }

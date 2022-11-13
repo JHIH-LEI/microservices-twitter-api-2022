@@ -1,4 +1,5 @@
 import {
+  DBError,
   LikeDeletedEvent,
   Listener,
   Queue,
@@ -18,6 +19,8 @@ export class LikeDeletedConsumer extends Listener<LikeDeletedEvent> {
   ) {
     const { id } = content;
 
-    await Like.deleteOne({ id });
+    await Like.deleteOne({ id }).catch((err: any) => {
+      throw new DBError(`delete like error: ${JSON.stringify(err)}`);
+    });
   }
 }
