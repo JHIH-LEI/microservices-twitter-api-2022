@@ -21,14 +21,8 @@ const replySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    version: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
   },
   {
-    timestamps: true,
     optimisticConcurrency: true,
     toJSON: {
       transform(doc, ret) {
