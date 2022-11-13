@@ -9,6 +9,7 @@ declare global {
   var getCookie: (id?: mongoose.Types.ObjectId) => string[];
 }
 
+jest.mock("../publishers/tweet-created.ts");
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
