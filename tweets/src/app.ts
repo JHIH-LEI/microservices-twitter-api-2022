@@ -10,6 +10,8 @@ import { deleteTweetRouter } from "./routes/delete";
 import { newTweetRouter } from "./routes/new";
 import { indexTweetRouter } from "./routes/index";
 import amqp from "amqplib";
+import { LikeCreatedConsumer } from "./subscribers/like-created";
+import { LikeDeletedConsumer } from "./subscribers/like-deleted";
 
 const app = express();
 
@@ -35,13 +37,17 @@ app.all("*", () => {
 app.use(errorHandler);
 
 let connection: amqp.Connection;
-let channel: amqp.Channel;
+let senderChannel: amqp.Channel;
+let listenerChannel: amqp.Channel;
 
 const setupRabbitMQ = async () => {
   connection = await amqp.connect(process.env.RABBITMQ_URL!);
-  channel = await connection.createChannel();
+  listenerChannel = await connection.createChannel();
+  senderChannel = await connection.createChannel();
+  await new LikeCreatedConsumer(connection).consumeFromQueue();
+  await new LikeDeletedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
 
-export { app, connection, channel };
+export { app, connection, senderChannel, listenerChannel };

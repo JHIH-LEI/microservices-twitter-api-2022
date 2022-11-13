@@ -4,8 +4,10 @@ import { TweetDoc } from "./tweet";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface LikeAttrs {
-  tweetId: mongoose.Schema.Types.ObjectId;
-  userId: mongoose.Schema.Types.ObjectId;
+  tweetId: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  createdAt: Date;
+  id: mongoose.Types.ObjectId;
 }
 
 interface LikeDoc extends mongoose.Document {
@@ -44,7 +46,12 @@ likeSchema.set("versionKey", "version");
 likeSchema.plugin(updateIfCurrentPlugin);
 
 likeSchema.statics.build = (attrs: LikeAttrs) => {
-  return new Like(attrs);
+  return new Like({
+    _id: attrs.id,
+    userId: attrs.userId,
+    tweetId: attrs.tweetId,
+    createdAt: attrs.createdAt,
+  });
 };
 
 export const Like = mongoose.model<LikeDoc, LikeModel>("Like", likeSchema);

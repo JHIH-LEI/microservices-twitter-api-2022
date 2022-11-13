@@ -3,9 +3,9 @@ import {
   Queue,
   TweetDeletedEvent,
 } from "@domosideproject/twitter-common";
-import { channel } from "../app";
+import { senderChannel } from "../app";
 
 export class TweetDeletedPublisher extends Publisher<TweetDeletedEvent> {
   readonly queue = Queue.TweetDeleted;
-  readonly channel = channel;
+  readonly channel = senderChannel;
 }
