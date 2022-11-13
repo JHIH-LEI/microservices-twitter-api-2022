@@ -6,6 +6,7 @@ import { signinUserRouter } from "./routes/signin";
 import { updateUserRouter } from "./routes/update";
 import { signoutUserRouter } from "./routes/signout";
 import { currentUserRouter } from "./routes/current";
+import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
 
 const app = express();
 
@@ -23,5 +24,10 @@ app.use("/api/users", signinUserRouter);
 app.use("/api/users", updateUserRouter);
 app.use("/api/users", signoutUserRouter);
 app.use("/api/users", currentUserRouter);
+
+app.use("*", () => {
+  throw new NotFoundError("can not find routes");
+});
+app.use(errorHandler);
 
 export { app };
