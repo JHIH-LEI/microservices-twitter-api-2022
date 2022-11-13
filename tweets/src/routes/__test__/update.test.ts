@@ -29,7 +29,6 @@ it("update success and publish to tweet:updated with valid content", async () =>
 
   const expectTweetUpdatedPublishContent: TweetUpdatedContent = {
     id: tweet.id,
-    userId: ownerId.toHexString(),
     updatedAt: tweet.updatedAt.toISOString(),
     description: tweet.description,
     version: tweet.version,

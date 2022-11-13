@@ -45,7 +45,6 @@ router.put(
     await new TweetUpdatedPublisher(connection).publish({
       id: updatedTweet.id.toString(),
       version: updatedTweet.version,
-      userId: updatedTweet.userId.toString(),
       description: updatedTweet.description,
       updatedAt: updatedTweet.updatedAt.toISOString(),
     });
