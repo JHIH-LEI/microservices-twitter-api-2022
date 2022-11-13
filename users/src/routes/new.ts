@@ -27,10 +27,12 @@ router.post(
     body("email").isEmail().withMessage("Email must valid"),
     body("account")
       .trim()
+      .isString()
       .isLength({ min: 4 })
       .withMessage("account must at least 4 characters"),
     body("password")
       .trim()
+      .isString()
       .isLength({ min: 6, max: 50 })
       .withMessage("password must between 6~50 characters"),
   ],
