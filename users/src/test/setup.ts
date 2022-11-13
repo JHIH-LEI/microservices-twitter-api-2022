@@ -8,6 +8,8 @@ declare global {
 
 let mongoServer: MongoMemoryServer;
 
+jest.mock("../publishers/user-created.ts");
+
 beforeAll(async () => {
   process.env.JWT_KEY = "domw";
   mongoServer = await MongoMemoryServer.create();

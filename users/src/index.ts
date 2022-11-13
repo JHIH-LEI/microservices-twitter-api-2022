@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config({ path: `${process.cwd()}/src/.env` });
 import mongoose from "mongoose";
 import { app } from "./app";
 import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
@@ -14,10 +12,6 @@ const start = async () => {
 
     if (!mongodbURI) {
       throw new Error("missing mongodb uri plz check env variable");
-    }
-
-    if (!process.env.RABBITMQ_URL) {
-      throw new Error("missing RABBITMQ_URL env variable");
     }
 
     await mongoose.connect(mongodbURI);
