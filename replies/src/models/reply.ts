@@ -1,5 +1,8 @@
+import { ReplyDeletedContent } from "@domosideproject/twitter-common";
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import { connection } from "../app";
+import { ReplyDeletedPublisher } from "../publishers/reply-deleted";
 
 interface ReplyAttrs {
   tweetId: string;
@@ -58,5 +61,16 @@ replySchema.plugin(updateIfCurrentPlugin);
 replySchema.statics.build = (attrs: ReplyAttrs) => {
   return new Reply(attrs);
 };
+
+replySchema.post("remove", async function () {
+  const content: ReplyDeletedContent = {
+    // @ts-ignore can not know our ReplyDoc type
+    id: this._id.toHexString(),
+    // @ts-ignore can not know our ReplyDoc type
+    version: this.version,
+  };
+  // @ts-ignore
+  await new ReplyDeletedPublisher(connection).publish(content);
+});
 
 export const Reply = mongoose.model<ReplyDoc, ReplyModel>("Reply", replySchema);

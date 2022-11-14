@@ -5,6 +5,7 @@ import {
   requireAuth,
   DBError,
   validateRequest,
+  ConflictError,
 } from "@domosideproject/twitter-common";
 import { Reply } from "../models/reply";
 import { param } from "express-validator";
@@ -24,11 +25,18 @@ router.delete(
     const { replyId } = req.params;
     const loginUserId = req.currentUser?.id;
 
-    await Reply.deleteOne({ userId: loginUserId, replyId }).catch((err) => {
-      console.error(err);
-      throw new DBError(JSON.stringify(err));
-    });
+    const reply = await Reply.findOne({ userId: loginUserId, replyId }).catch(
+      (err) => {
+        console.error(err);
+        throw new DBError(JSON.stringify(err));
+      }
+    );
 
+    if (reply === null) {
+      throw new ConflictError("reply not exist");
+    }
+
+    await reply.remove();
     res.status(204).send("ok");
   }
 );
