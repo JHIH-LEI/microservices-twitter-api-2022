@@ -8,6 +8,7 @@ import { getUserRepliesRouter } from "./routes/getUserReplies";
 import { newReplyRouter } from "./routes/new";
 import { deleteReplyRouter } from "./routes/delete";
 import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
+import amqp from "amqplib";
 
 const app = express();
 
@@ -25,9 +26,26 @@ app.use("/api/replies", getUserRepliesRouter);
 app.use("/api/replies", newReplyRouter);
 app.use("/api/replies", deleteReplyRouter);
 
+let connection: amqp.Connection;
+let senderChannel: amqp.Channel;
+let listenerChannel: amqp.Channel;
+
+const setupRabbitMQ = async () => {
+  if (!process.env.RABBITMQ_URL) {
+    throw new Error("RABBITMQ_URL env is required");
+  }
+
+  connection = await amqp.connect(process.env.RABBITMQ_URL!);
+  listenerChannel = await connection.createChannel();
+  senderChannel = await connection.createChannel();
+};
+
+setupRabbitMQ();
+
 app.all("*", () => {
   throw new NotFoundError("can not find route");
 });
 
 app.use(errorHandler);
-export { app };
+
+export { app, senderChannel, listenerChannel, connection };
