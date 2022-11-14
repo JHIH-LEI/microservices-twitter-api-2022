@@ -19,7 +19,7 @@ export class TweetDeletedConsumer extends Listener<TweetDeletedEvent> {
   ) {
     const { id, version } = content;
 
-    const tweet = await Tweet.findOneAndDelete({
+    const tweet = await Tweet.findOne({
       id,
       version,
     }).catch((err: any) => {
@@ -30,5 +30,8 @@ export class TweetDeletedConsumer extends Listener<TweetDeletedEvent> {
     if (tweet === null) {
       return;
     }
+
+    // remove will trigger hook to delete all replated reply records
+    await tweet.remove();
   }
 }
