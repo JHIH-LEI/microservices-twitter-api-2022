@@ -5,8 +5,9 @@ import { Message } from "amqplib";
 import { Tweet } from "../../models/tweet";
 import { connection } from "../../app";
 import { Reply } from "../../models/reply";
+import { ReplyDeletedPublisher } from "../../publishers/reply-deleted";
 
-it("deleted tweet and all related replies", async () => {
+it("deleted tweet and all related replies and then publish to reply:deleted", async () => {
   const tweetId = new Types.ObjectId();
   const userId = new Types.ObjectId();
 
@@ -49,6 +50,10 @@ it("deleted tweet and all related replies", async () => {
 
   const replatedReply = await Reply.find({ tweetId });
   expect(replatedReply.length).toBe(0);
+  expect(ReplyDeletedPublisher).toBeCalledTimes(1);
+  const mockPublish = (ReplyDeletedPublisher as jest.Mock).mock.instances[0]
+    .publish as jest.Mock;
+  expect(mockPublish).toBeCalledTimes(2);
 });
 
 it("skip handle event because tweet have not exist. should wait for create first", async () => {

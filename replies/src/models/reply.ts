@@ -73,4 +73,29 @@ replySchema.post("remove", async function () {
   await new ReplyDeletedPublisher(connection).publish(content);
 });
 
+replySchema.pre("deleteMany", async function () {
+  // @ts-ignore
+  const tweetId = this._conditions.tweetId.toHexString();
+
+  if (tweetId) {
+    const deletedLikes = await Reply.find({ tweetId });
+    if (deletedLikes.length) {
+      // @ts-ignore
+      const publisher = new ReplyDeletedPublisher(connection);
+
+      // 我想要拿到像是這樣的格式：（用Promise.all比起用forEach一個一個await快）
+      // await Promise.all([publisher.publish(1), publisher.publisher(2])
+
+      await Promise.all(
+        deletedLikes.map(({ _id, version }) =>
+          publisher.publish({
+            id: _id.toHexString(),
+            version,
+          })
+        )
+      );
+    }
+  }
+});
+
 export const Reply = mongoose.model<ReplyDoc, ReplyModel>("Reply", replySchema);

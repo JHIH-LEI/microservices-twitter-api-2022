@@ -38,9 +38,9 @@ tweetSchema.statics.build = (attrs: TweetAttrs) => {
 };
 
 // before delete tweet delete all related reply
-tweetSchema.pre("remove", function (next) {
+tweetSchema.pre("remove", async function (next) {
   // @ts-ignore query type didn't eat our TweetDoc type
-  Reply.remove({ tweetId: this._id }).exec();
+  await Reply.deleteMany({ tweetId: this._id });
   next();
 });
 
