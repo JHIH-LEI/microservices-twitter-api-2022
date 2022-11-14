@@ -12,6 +12,7 @@ import amqp from "amqplib";
 import { UserCreatedConsumer } from "./subscribers/user-created";
 import { UserUpdatedConsumer } from "./subscribers/user-updated";
 import { TweetCreatedConsumer } from "./subscribers/tweet-created";
+import { TweetDeletedConsumer } from "./subscribers/tweet-deleted";
 
 const app = express();
 
@@ -48,6 +49,8 @@ const setupRabbitMQ = async () => {
   await new UserUpdatedConsumer(connection).consumeFromQueue();
   // @ts-ignore
   await new TweetCreatedConsumer(connection).consumeFromQueue();
+  // @ts-ignore
+  await new TweetDeletedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
