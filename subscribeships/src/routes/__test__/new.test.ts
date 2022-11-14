@@ -7,12 +7,12 @@ it("start subscribe", async () => {
   jest.setTimeout(10000);
   const [loginUser, targetUser] = await Promise.all([
     User.create({
-      id: 1,
+      id: "1",
       createdAt: new Date(),
       updatedAt: new Date(),
     }),
     User.create({
-      id: 2,
+      id: "2",
       createdAt: new Date(),
       updatedAt: new Date(),
     }),
