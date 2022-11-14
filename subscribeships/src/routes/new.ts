@@ -1,8 +1,11 @@
 import express, { Request, Response } from "express";
-import { requireAuth, currentUser } from "@domosideproject/twitter-common";
+import {
+  requireAuth,
+  currentUser,
+  DBError,
+  ConflictError,
+} from "@domosideproject/twitter-common";
 import { db } from "../models/index";
-import { ConflictError } from "../../../common/src";
-import { DBError } from "../../../common/src";
 const { User, Subscribeship } = db;
 const router = express.Router();
 
