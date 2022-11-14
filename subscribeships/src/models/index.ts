@@ -1,3 +1,4 @@
+import { SubscribeshipCreatedContent } from "@domosideproject/twitter-common";
 import {
   CreationOptional,
   InferAttributes,
@@ -9,6 +10,8 @@ import {
   Association,
   ForeignKey,
 } from "sequelize";
+import { connection } from "../app";
+import { SubscribeshipCreatedPublisher } from "../publishers/subscribeship-created";
 
 let dbURL = "";
 switch (process.env.NODE_ENV) {
@@ -54,10 +57,33 @@ Subscribeship.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE,
+    createdAt: {
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+    },
   },
   {
+    hooks: {
+      afterCreate: async (subscribeship, options) => {
+        const subscriber = await User.findByPk(subscribeship.subscriberId);
+        if (subscriber === null) {
+          return;
+        }
+        // date milliseconds will be round down in sql by default
+        subscribeship.createdAt.setMilliseconds(0);
+        const content: SubscribeshipCreatedContent = {
+          subscriberId: subscribeship.subscriberId,
+          subscribingId: subscribeship.subscribingId,
+          // sql don't save precise milliseconds
+          createdAt: subscribeship.createdAt.toISOString(),
+          name: subscriber.name,
+          avatar: subscriber.avatar,
+        };
+        await new SubscribeshipCreatedPublisher(connection).publish(content);
+      },
+    },
     sequelize,
     tableName: "subscribeships",
   }
@@ -77,6 +103,8 @@ class User extends Model<
   declare id: string; // from user:created event
   declare createdAt: CreationOptional<Date>; // from user:created event
   declare updatedAt: CreationOptional<Date>; // from user:created event
+  declare name: string;
+  declare avatar: string;
 
   // pre-declare 潛在的 includes
   declare subscribers: NonAttribute<User[]>;
@@ -93,6 +121,12 @@ User.init(
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+    },
+    avatar: {
+      type: DataTypes.STRING,
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
