@@ -8,8 +8,8 @@ interface ReplyAttrs {
 }
 
 interface ReplyDoc extends mongoose.Document {
-  tweetId: mongoose.Schema.Types.ObjectId;
-  userId: mongoose.Schema.Types.ObjectId;
+  tweetId: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   comment: string;
   version: number;
   createdAt: Date;
