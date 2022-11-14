@@ -42,8 +42,8 @@ class Subscribeship extends Model<
   InferCreationAttributes<Subscribeship>
 > {
   declare id: CreationOptional<number>;
-  declare subscriberId: ForeignKey<number>;
-  declare subscribingId: ForeignKey<number>;
+  declare subscriberId: ForeignKey<string>;
+  declare subscribingId: ForeignKey<string>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -74,7 +74,7 @@ class User extends Model<
   InferAttributes<User, { omit: "subscribings" | "subscribers" }>,
   InferCreationAttributes<User>
 > {
-  declare id: number; // from user:created event
+  declare id: string; // from user:created event
   declare createdAt: CreationOptional<Date>; // from user:created event
   declare updatedAt: CreationOptional<Date>; // from user:created event
 
@@ -91,8 +91,7 @@ class User extends Model<
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       primaryKey: true,
     },
     createdAt: DataTypes.DATE,
