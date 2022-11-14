@@ -3,11 +3,15 @@ import {
   requireAuth,
   DBError,
   validateRequest,
+  ReplyCreatedContent,
 } from "@domosideproject/twitter-common";
 import express, { Request, Response } from "express";
 import { Types } from "mongoose";
 import { param, body } from "express-validator";
 import { Reply } from "../models/reply";
+import { ReplyCreatedPublisher } from "../publishers/reply-created";
+import { connection } from "../app";
+import { User } from "../models/user";
 const router = express.Router();
 
 type CreateReplyFromRequest = {
@@ -36,18 +40,33 @@ router.post(
 
     const reply = Reply.build({ tweetId, userId, comment });
 
-    await reply.save().catch((err) => {
+    const [user] = await Promise.all([
+      User.findById(userId),
+      reply.save(),
+    ]).catch((err) => {
       console.error(err);
       throw new DBError(JSON.stringify(err));
     });
 
-    res
-      .status(201)
-      .send({
-        id: reply._id,
-        createdAt: reply.createdAt,
-        updatedAt: reply.updatedAt,
-      });
+    const content: ReplyCreatedContent = {
+      id: reply.id,
+      comment: reply.comment,
+      createdAt: reply.createdAt.toISOString(),
+      updatedAt: reply.updatedAt.toISOString(),
+      version: reply.version,
+      tweetId: reply.tweetId.toHexString(),
+      userId,
+      avatar: user!.avatar,
+    };
+
+    // @ts-ignore
+    await new ReplyCreatedPublisher(connection).publish(content);
+
+    res.status(201).send({
+      id: reply._id,
+      createdAt: reply.createdAt,
+      updatedAt: reply.updatedAt,
+    });
   }
 );
 
