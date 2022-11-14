@@ -1,15 +1,26 @@
 import mongoose from "mongoose";
 
 interface ReplyAttrs {
-  tweetId: mongoose.Schema.Types.ObjectId;
+  tweetId: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  version: number;
 }
 
 interface ReplyDoc extends mongoose.Document {
-  tweetId: mongoose.Schema.Types.ObjectId;
+  tweetId: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  version: number;
 }
 
 interface ReplyModel extends mongoose.Model<ReplyDoc> {
   build(attrs: ReplyAttrs): ReplyDoc;
+  findOneAndDeletedByVersionOrder(event: {
+    id: string;
+    version: number;
+  }): Promise<ReplyDoc | null>;
 }
 
 const replySchema = new mongoose.Schema(
@@ -18,9 +29,16 @@ const replySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
+    createdAt: {
+      type: Date,
+      require: true,
+    },
+    updatedAt: {
+      type: Date,
+      require: true,
+    },
   },
   {
-    timestamps: true,
     optimisticConcurrency: true,
     toJSON: {
       transform(doc, ret) {
@@ -35,6 +53,13 @@ replySchema.set("versionKey", "version");
 
 replySchema.statics.build = (attrs: ReplyAttrs) => {
   return new Reply(attrs);
+};
+
+replySchema.statics.findOneAndDeletedByVersionOrder = async (event: {
+  id: string;
+  version: number;
+}) => {
+  return Reply.findOneAndDelete({ id: event.id, version: event.version });
 };
 
 export const Reply = mongoose.model<ReplyDoc, ReplyModel>("Reply", replySchema);
