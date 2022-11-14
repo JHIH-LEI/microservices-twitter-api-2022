@@ -9,6 +9,8 @@ test("unsubscribe", async () => {
     id: "1",
     createdAt: new Date(),
     updatedAt: new Date(),
+    name: "loginUser",
+    avatar: "loginUser",
   }).catch((err) => {
     throw new Error(err);
   });
@@ -17,6 +19,8 @@ test("unsubscribe", async () => {
     id: "2",
     createdAt: new Date(),
     updatedAt: new Date(),
+    name: "targetUser",
+    avatar: "targetUser",
   });
 
   await Subscribeship.create({

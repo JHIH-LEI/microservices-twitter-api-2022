@@ -15,7 +15,9 @@ export class UserCreatedConsumer extends Listener<UserCreatedEvent> {
     content: UserCreatedEvent["content"],
     message: Message
   ) {
-    const { id } = content;
-    await db.User.create({ id }).catch((err) => console.error(err));
+    const { id, name, avatar } = content;
+    await db.User.create({ id, name, avatar }).catch((err) =>
+      console.error(err)
+    );
   }
 }

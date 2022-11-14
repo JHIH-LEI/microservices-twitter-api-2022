@@ -8,6 +8,14 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
       },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      avatar: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
