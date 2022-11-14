@@ -43,4 +43,4 @@ app.all("*", () => {
 });
 
 app.use(errorHandler);
-export { app };
+export { app, connection, listenerChannel, senderChannel };
