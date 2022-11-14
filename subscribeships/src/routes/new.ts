@@ -32,7 +32,7 @@ router.post(
 
     try {
       await db.Subscribeship.findOrCreate({
-        where: { subscriberId: subscribingId, subscribingId },
+        where: { subscriberId, subscribingId },
       });
     } catch (err: any) {
       console.error(err);
