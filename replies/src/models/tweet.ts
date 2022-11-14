@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Reply } from "./reply";
 interface TweetAttrs {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
@@ -35,5 +36,12 @@ const tweetSchema = new mongoose.Schema(
 tweetSchema.statics.build = (attrs: TweetAttrs) => {
   return new Tweet(attrs);
 };
+
+// before delete tweet delete all related reply
+tweetSchema.pre("remove", function (next) {
+  // @ts-ignore query type didn't eat our TweetDoc type
+  Reply.remove({ tweetId: this._id }).exec();
+  next();
+});
 
 export const Tweet = mongoose.model<TweetDoc, TweetModel>("Tweet", tweetSchema);
