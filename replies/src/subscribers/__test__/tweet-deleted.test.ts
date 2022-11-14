@@ -4,8 +4,9 @@ import { TweetDeletedConsumer } from "../tweet-deleted";
 import { Message } from "amqplib";
 import { Tweet } from "../../models/tweet";
 import { connection } from "../../app";
+import { Reply } from "../../models/reply";
 
-it("deleted tweet when receive content from tweet:deleted queue", async () => {
+it("deleted tweet and all related replies", async () => {
   const tweetId = new Types.ObjectId();
   const userId = new Types.ObjectId();
 
@@ -15,6 +16,20 @@ it("deleted tweet when receive content from tweet:deleted queue", async () => {
   });
 
   await tweet.save();
+
+  const replyOne = Reply.build({
+    comment: "replyOne",
+    userId: new Types.ObjectId().toHexString(),
+    tweetId: tweetId.toHexString(),
+  });
+
+  const replyTwo = Reply.build({
+    comment: "replyreplyTwo",
+    userId: new Types.ObjectId().toHexString(),
+    tweetId: tweetId.toHexString(),
+  });
+
+  await Promise.all([replyOne.save(), replyTwo.save()]);
 
   const contentFromQueue: TweetDeletedContent = {
     id: tweetId.toHexString(),
@@ -31,6 +46,9 @@ it("deleted tweet when receive content from tweet:deleted queue", async () => {
 
   const tweetInDB = await Tweet.findOne({ id: tweetId });
   expect(tweetInDB).toBeNull();
+
+  const replatedReply = await Reply.find({ tweetId });
+  expect(replatedReply.length).toBe(0);
 });
 
 it("skip handle event because tweet have not exist. should wait for create first", async () => {
