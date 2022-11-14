@@ -1,13 +1,17 @@
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 interface TweetAttrs {
+  _id: mongoose.Types.ObjectId;
   description: string;
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  version: number;
 }
 
 export interface TweetDoc extends mongoose.Document {
   description: string;
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +30,10 @@ interface TweetModel extends mongoose.Model<TweetDoc> {
     id: string;
     version: number;
   }): Promise<TweetDoc | null>;
+  findOneAndDeletedByVersionOrder(event: {
+    id: string;
+    version: number;
+  }): Promise<TweetDoc | null>;
 }
 
 const tweetSchema = new mongoose.Schema(
@@ -38,10 +46,17 @@ const tweetSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       require: true,
     },
+    createdAt: {
+      type: Date,
+      require: true,
+    },
+    updatedAt: {
+      type: Date,
+      require: true,
+    },
   },
   {
     optimisticConcurrency: true,
-    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
@@ -62,6 +77,13 @@ tweetSchema.statics.findByVersionOrder = (event: {
   version: number;
 }) => {
   return Tweet.findOne({ _id: event.id, version: event.version - 1 });
+};
+
+tweetSchema.statics.findOneAndDeletedByVersionOrder = (event: {
+  id: string;
+  version: number;
+}) => {
+  return Tweet.findOneAndDelete({ id: event.id, version: event.version });
 };
 
 export const Tweet = mongoose.model<TweetDoc, TweetModel>("Tweet", tweetSchema);
