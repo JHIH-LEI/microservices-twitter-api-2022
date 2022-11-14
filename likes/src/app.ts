@@ -10,6 +10,7 @@ import { deleteLikeRouter } from "./routes/delete";
 import amqp from "amqplib";
 import { TweetCreatedConsumer } from "./subscribers/tweet-created";
 import { TweetDeletedConsumer } from "./subscribers/tweet-deleted";
+import { TweetUpdatedConsumer } from "./subscribers/tweet-updated";
 
 const app = express();
 
@@ -46,6 +47,7 @@ const setupRabbitMQ = async () => {
   senderChannel = await connection.createChannel();
 
   await new TweetCreatedConsumer(connection).consumeFromQueue();
+  await new TweetUpdatedConsumer(connection).consumeFromQueue();
   await new TweetDeletedConsumer(connection).consumeFromQueue();
 };
 
