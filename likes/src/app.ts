@@ -12,6 +12,7 @@ import { TweetCreatedConsumer } from "./subscribers/tweet-created";
 import { TweetDeletedConsumer } from "./subscribers/tweet-deleted";
 import { TweetUpdatedConsumer } from "./subscribers/tweet-updated";
 import { UserCreatedConsumer } from "./subscribers/user-created";
+import { UserUpdatedConsumer } from "./subscribers/user-updated";
 
 const app = express();
 
@@ -51,6 +52,7 @@ const setupRabbitMQ = async () => {
   await new TweetUpdatedConsumer(connection).consumeFromQueue();
   await new TweetDeletedConsumer(connection).consumeFromQueue();
   await new UserCreatedConsumer(connection).consumeFromQueue();
+  await new UserUpdatedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
