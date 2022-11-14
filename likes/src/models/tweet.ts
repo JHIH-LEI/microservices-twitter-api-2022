@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import { Like } from "./like";
 interface TweetAttrs {
   _id: mongoose.Types.ObjectId;
   description: string;
@@ -79,11 +80,23 @@ tweetSchema.statics.findByVersionOrder = (event: {
   return Tweet.findOne({ _id: event.id, version: event.version - 1 });
 };
 
-tweetSchema.statics.findOneAndDeletedByVersionOrder = (event: {
+tweetSchema.statics.findOneAndDeletedByVersionOrder = async (event: {
   id: string;
   version: number;
 }) => {
-  return Tweet.findOneAndDelete({ id: event.id, version: event.version });
+  const tweet = await Tweet.findOne({ id: event.id, version: event.version });
+  if (tweet) {
+    await tweet.remove();
+  }
+  return tweet;
 };
+
+tweetSchema.pre("remove", async function (next) {
+  await Like.deleteMany(
+    // @ts-ignore
+    { tweetId: this._id }
+  );
+  next();
+});
 
 export const Tweet = mongoose.model<TweetDoc, TweetModel>("Tweet", tweetSchema);

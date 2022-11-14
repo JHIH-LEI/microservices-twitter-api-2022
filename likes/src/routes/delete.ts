@@ -27,7 +27,7 @@ router.delete(
     const { tweetId } = req.params;
     const likedUserId = req.currentUser?.id;
 
-    const deletedLike = await Like.findOneAndDelete({
+    const deletedLike = await Like.findOne({
       userId: likedUserId,
       tweetId,
     }).catch((err) => {
@@ -39,9 +39,8 @@ router.delete(
       throw new ConflictError("like not exist");
     }
 
-    await new LikeDeletedPublishers(connection).publish({
-      id: deletedLike!.id,
-    });
+    // trigger hook to publish
+    await deletedLike!.remove();
 
     res.status(204).send("ok");
   }
