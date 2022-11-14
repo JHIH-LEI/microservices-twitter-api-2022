@@ -8,6 +8,8 @@ import { newLikeRouter } from "./routes/new";
 import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
 import { deleteLikeRouter } from "./routes/delete";
 import amqp from "amqplib";
+import { TweetCreatedConsumer } from "./subscribers/tweet-created";
+import { TweetDeletedConsumer } from "./subscribers/tweet-deleted";
 
 const app = express();
 
@@ -42,7 +44,11 @@ const setupRabbitMQ = async () => {
   connection = await amqp.connect(process.env.RABBITMQ_URL!);
   listenerChannel = await connection.createChannel();
   senderChannel = await connection.createChannel();
+
+  await new TweetCreatedConsumer(connection).consumeFromQueue();
+  await new TweetDeletedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
+
 export { app, senderChannel, listenerChannel, connection };
