@@ -6,6 +6,7 @@ import cookieSession from "cookie-session";
 import { unSubscribeRouter } from "./routes/delete";
 import { subscribeRouter } from "./routes/new";
 import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
+import amqp from "amqplib";
 
 const app = express();
 
@@ -20,6 +21,22 @@ app.use(
 
 app.use("/api/subscribeships", subscribeRouter);
 app.use("/api/subscribeships", unSubscribeRouter);
+
+let connection: amqp.Connection;
+let senderChannel: amqp.Channel;
+let listenerChannel: amqp.Channel;
+
+const setupRabbitMQ = async () => {
+  if (!process.env.RABBITMQ_URL) {
+    throw new Error("RABBITMQ_URL env is required");
+  }
+
+  connection = await amqp.connect(process.env.RABBITMQ_URL);
+  senderChannel = await connection.createChannel();
+  listenerChannel = await connection.createChannel();
+};
+
+setupRabbitMQ();
 
 app.all("*", () => {
   throw new NotFoundError("can not find route");
