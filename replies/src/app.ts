@@ -10,6 +10,7 @@ import { deleteReplyRouter } from "./routes/delete";
 import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
 import amqp from "amqplib";
 import { UserCreatedConsumer } from "./subscribers/user-created";
+import { UserUpdatedConsumer } from "./subscribers/user-updated";
 
 const app = express();
 
@@ -42,6 +43,8 @@ const setupRabbitMQ = async () => {
 
   // @ts-ignore
   await new UserCreatedConsumer(connection).consumeFromQueue();
+  // @ts-ignore
+  await new UserUpdatedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
