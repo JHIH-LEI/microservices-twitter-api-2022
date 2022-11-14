@@ -21,9 +21,21 @@ it("return all tweets liked by target user", async () => {
   // 新增要被按讚的三則貼文
 
   const [tweet1, tweet2, tweet3] = await Promise.all([
-    Tweet.create({ description: "tweet1" }),
-    Tweet.create({ description: "tweet2" }),
-    Tweet.create({ description: "tweet3" }),
+    Tweet.create({
+      description: "tweet1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+    Tweet.create({
+      description: "tweet2",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+    Tweet.create({
+      description: "tweet3",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
   ]);
 
   const tweet1Id = tweet1.id;
