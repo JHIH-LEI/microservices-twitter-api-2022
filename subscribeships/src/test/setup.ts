@@ -4,7 +4,7 @@ dotenv.config({ path: `${process.cwd()}/src/.env` });
 process.env.NODE_ENV = "test";
 
 declare global {
-  var getCookie: (id?: number) => string[];
+  var getCookie: (id?: string) => string[];
 }
 import { db } from "../models/index";
 const { User, Subscribeship, sequelize } = db;
@@ -20,8 +20,8 @@ beforeAll(async () => {
 beforeEach(async () => {
   // 刪除資料
   try {
-    await Subscribeship.destroy({ where: {} });
-    await User.destroy({ where: {} });
+    await Subscribeship.destroy({ where: {}, force: true });
+    await User.destroy({ where: {}, force: true });
   } catch (err) {
     console.log(err);
   }
@@ -30,8 +30,8 @@ beforeEach(async () => {
 afterEach(async () => {
   // 刪除資料
   try {
-    await Subscribeship.destroy({ where: {} });
-    await User.destroy({ where: {} });
+    await Subscribeship.destroy({ where: {}, force: true });
+    await User.destroy({ where: {}, force: true });
   } catch (err) {
     console.log(err);
   }
@@ -41,8 +41,8 @@ afterAll(async () => {
   await sequelize.close();
 });
 
-global.getCookie = (id?: number) => {
-  id = id || 1;
+global.getCookie = (id?: string) => {
+  id = id || "1";
   //  產生fake cookie而不是通過依賴另一個服務取得
   // 創建jwt payload {id, email}
   const payload = { id: id, email: "test@test.com" };
