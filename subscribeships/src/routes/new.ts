@@ -6,7 +6,6 @@ import {
   ConflictError,
 } from "@domosideproject/twitter-common";
 import { db } from "../models/index";
-const { User, Subscribeship } = db;
 const router = express.Router();
 
 router.post(
@@ -21,7 +20,7 @@ router.post(
       throw new ConflictError("can not follow yourself");
     }
     // 不能追蹤不存在的用戶
-    const isExistUser = await User.findByPk(subscriberId);
+    const isExistUser = await db.User.findByPk(subscriberId);
 
     if (isExistUser === null) {
       throw new ConflictError(
@@ -32,7 +31,7 @@ router.post(
     // 不可重複追蹤
 
     try {
-      await Subscribeship.findOrCreate({
+      await db.Subscribeship.findOrCreate({
         where: { subscriberId: subscribingId, subscribingId },
       });
     } catch (err: any) {
