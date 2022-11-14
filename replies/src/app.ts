@@ -11,6 +11,7 @@ import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
 import amqp from "amqplib";
 import { UserCreatedConsumer } from "./subscribers/user-created";
 import { UserUpdatedConsumer } from "./subscribers/user-updated";
+import { TweetCreatedConsumer } from "./subscribers/tweet-created";
 
 const app = express();
 
@@ -45,6 +46,8 @@ const setupRabbitMQ = async () => {
   await new UserCreatedConsumer(connection).consumeFromQueue();
   // @ts-ignore
   await new UserUpdatedConsumer(connection).consumeFromQueue();
+  // @ts-ignore
+  await new TweetCreatedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
