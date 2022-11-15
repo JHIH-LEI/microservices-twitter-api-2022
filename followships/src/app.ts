@@ -9,6 +9,7 @@ import { topUserRouter } from "./routes/topUser";
 import { userFollowings } from "./routes/userFollowings";
 import { userFollowers } from "./routes/userFollowers";
 import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
+import amqp from "amqplib";
 
 const app = express();
 
@@ -33,4 +34,20 @@ app.all("*", () => {
 
 app.use(errorHandler);
 
-export { app };
+let connection: amqp.Connection;
+let senderChannel: amqp.Channel;
+let listenerChannel: amqp.Channel;
+
+const setupRabbitMQ = async () => {
+  if (!process.env.RABBITMQ_URL) {
+    throw new Error("RABBITMQ_URL env is required");
+  }
+
+  connection = await amqp.connect(process.env.RABBITMQ_URL!);
+  listenerChannel = await connection.createChannel();
+  senderChannel = await connection.createChannel();
+};
+
+setupRabbitMQ();
+
+export { app, listenerChannel, senderChannel, connection };
