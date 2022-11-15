@@ -1,7 +1,7 @@
 import { CustomError } from "./custom-error";
 import { ErrorResponse } from "./type-error";
 
-export abstract class NotAuthorizedError extends CustomError {
+export class NotAuthorizedError extends CustomError {
   statusCode = 401;
 
   constructor() {

@@ -1,7 +1,7 @@
 import { CustomError } from "./custom-error";
 import { ErrorResponse } from "./type-error";
 
-export abstract class ConflictError extends CustomError {
+export class ConflictError extends CustomError {
   statusCode = 409;
 
   constructor(message: string) {

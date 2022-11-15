@@ -1,7 +1,7 @@
 import { CustomError } from "./custom-error";
 import { ErrorResponse } from "./type-error";
 
-export abstract class NotFoundError extends CustomError {
+export class NotFoundError extends CustomError {
   statusCode = 404;
 
   constructor(message: string) {
