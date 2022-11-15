@@ -1,6 +1,6 @@
 import { CustomError } from "./custom-error";
 
-export class DBError extends CustomError {
+export abstract class DBError extends CustomError {
   statusCode = 500;
 
   constructor(message: string) {
