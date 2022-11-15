@@ -137,17 +137,16 @@ User.init(
 
         if (user.isNewRecord) {
           user.version = 0;
-          return;
         }
 
         if (incomingVersion !== preVersion + 1) {
           // 版本不符，還有其他版本要等，不許可這次更新
-          console.error(
+
+          throw new Error(
             `wrong user version:${incomingVersion}, should be: ${
               preVersion + 1
             }`
           );
-          return;
         }
       },
     },
