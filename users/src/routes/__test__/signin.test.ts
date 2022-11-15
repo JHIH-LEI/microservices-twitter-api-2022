@@ -43,7 +43,7 @@ it("it should fail bc not match password", async () => {
 it("it should have cookie header after login successfully", async () => {
   const email = "test@example.com";
   const account = "test123";
-  const plainPassword = 12345678;
+  const plainPassword = "12345678";
   const name = "test user";
   await request(app)
     .post("/api/users")

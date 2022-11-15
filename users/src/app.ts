@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config({ path: `${process.cwd()}/src/.env` });
 import { json } from "body-parser";
 import express from "express";
 import cookieSession from "cookie-session";
@@ -6,6 +8,8 @@ import { signinUserRouter } from "./routes/signin";
 import { updateUserRouter } from "./routes/update";
 import { signoutUserRouter } from "./routes/signout";
 import { currentUserRouter } from "./routes/current";
+import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
+import amqp from "amqplib";
 
 const app = express();
 
@@ -24,4 +28,23 @@ app.use("/api/users", updateUserRouter);
 app.use("/api/users", signoutUserRouter);
 app.use("/api/users", currentUserRouter);
 
-export { app };
+app.use("*", () => {
+  throw new NotFoundError("can not find routes");
+});
+app.use(errorHandler);
+
+if (!process.env.RABBITMQ_URL) {
+  throw new Error("missing RABBITMQ_URL env variable");
+}
+
+let connection: amqp.Connection;
+let channel: amqp.Channel;
+
+const setupRabbitMQ = async () => {
+  connection = await amqp.connect(process.env.RABBITMQ_URL!);
+  channel = await connection.createChannel();
+};
+
+setupRabbitMQ();
+
+export { app, channel, connection };

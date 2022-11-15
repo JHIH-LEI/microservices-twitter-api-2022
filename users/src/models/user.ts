@@ -22,6 +22,8 @@ export interface UserDoc extends mongoose.Document {
   banner: string;
   isAdmin: boolean;
   version: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -71,6 +73,7 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
+    timestamps: true,
     toJSON: {
       transform: function (doc, ret) {
         ret.id = ret._id;

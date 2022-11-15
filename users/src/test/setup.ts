@@ -8,9 +8,10 @@ declare global {
 
 let mongoServer: MongoMemoryServer;
 
+jest.mock("../publishers/user-created.ts");
+
 beforeAll(async () => {
   process.env.JWT_KEY = "domw";
-  process.env.MONGO_URI = "mongodb://users-mongo-srv:27017/users";
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
 
