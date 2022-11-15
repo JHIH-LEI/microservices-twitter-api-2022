@@ -23,6 +23,12 @@ app.use(
 app.use("/api/subscribeships", subscribeRouter);
 app.use("/api/subscribeships", unSubscribeRouter);
 
+app.all("*", () => {
+  throw new NotFoundError("can not find route");
+});
+
+app.use(errorHandler);
+
 let connection: amqp.Connection;
 let senderChannel: amqp.Channel;
 let listenerChannel: amqp.Channel;
@@ -40,10 +46,4 @@ const setupRabbitMQ = async () => {
 };
 
 setupRabbitMQ();
-
-app.all("*", () => {
-  throw new NotFoundError("can not find route");
-});
-
-app.use(errorHandler);
 export { app, connection, listenerChannel, senderChannel };

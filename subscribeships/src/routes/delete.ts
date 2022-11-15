@@ -3,7 +3,7 @@ import {
   currentUser,
   DBError,
 } from "@domosideproject/twitter-common";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { db } from "../models/index";
 const router = express.Router();
 
@@ -11,20 +11,23 @@ router.delete(
   "/:userId",
   currentUser,
   requireAuth,
-  async (req: Request, res: Response) => {
-    const subscriberId = req.currentUser!.id;
-    const subscribingId = req.params.userId;
-
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const subscriberId = req.currentUser!.id;
+      const subscribingId = req.params.userId;
+
       await db.Subscribeship.destroy({
         where: { subscribingId, subscriberId },
         individualHooks: true,
+      }).catch((err) => {
+        throw new DBError(`db error: ${JSON.stringify(err)}`);
       });
+
+      res.status(204).send("ok");
     } catch (err) {
       console.error(err);
-      throw new DBError(`db error: ${JSON.stringify(err)}`);
+      next(err);
     }
-    res.status(204).send("ok");
   }
 );
 

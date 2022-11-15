@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import {
   requireAuth,
   currentUser,
@@ -12,33 +12,38 @@ router.post(
   "/:userId",
   currentUser,
   requireAuth,
-  async (req: Request, res: Response) => {
-    const subscriberId = req.currentUser!.id;
-    const subscribingId = req.params.userId;
-
-    if (subscriberId === subscribingId) {
-      throw new ConflictError("can not follow yourself");
-    }
-    // 不能追蹤不存在的用戶
-    const isExistUser = await db.User.findByPk(subscriberId);
-
-    if (isExistUser === null) {
-      throw new ConflictError(
-        `can not follow not existUser user: ${subscribingId}`
-      );
-    }
-    // 如果event還來不及處理怎辦？
-    // 不可重複追蹤
-
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const subscriberId = req.currentUser!.id;
+      const subscribingId = req.params.userId;
+
+      if (subscriberId === subscribingId) {
+        throw new ConflictError("can not follow yourself");
+      }
+      // 不能追蹤不存在的用戶
+      const isExistUser = await db.User.findByPk(subscriberId).catch((err) => {
+        throw new DBError(JSON.stringify(err));
+      });
+
+      if (isExistUser === null) {
+        throw new ConflictError(
+          `can not follow not existUser user: ${subscribingId}`
+        );
+      }
+      // 如果event還來不及處理怎辦？
+      // 不可重複追蹤
+
       await db.Subscribeship.findOrCreate({
         where: { subscriberId, subscribingId },
+      }).catch((err) => {
+        throw new DBError(err);
       });
-    } catch (err: any) {
+
+      res.status(201).send("ok");
+    } catch (err) {
       console.error(err);
-      throw new DBError(err);
+      next(err);
     }
-    res.status(201).send("ok");
   }
 );
 export { router as subscribeRouter };
