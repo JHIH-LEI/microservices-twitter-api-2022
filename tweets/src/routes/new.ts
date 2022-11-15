@@ -5,7 +5,7 @@ import {
   requireAuth,
   validateRequest,
 } from "@domosideproject/twitter-common";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { Tweet } from "../models/tweet";
 import { User } from "../models/user";
 import { body } from "express-validator";
@@ -19,36 +19,41 @@ router.post(
   requireAuth,
   [body("description").trim().not().isEmpty().isLength({ max: 140 })],
   validateRequest,
-  async (req: Request, res: Response) => {
-    const { description } = req.body as { description: string };
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { description } = req.body as { description: string };
 
-    const creator = await User.findById(req.currentUser!.id);
+      const creator = await User.findById(req.currentUser!.id);
 
-    if (creator === null) {
-      throw new ConflictError(
-        `can not find login user :${req.currentUser!.id} in database`
-      );
-    }
-
-    const tweet = await Tweet.create({ description, userId: creator.id }).catch(
-      (err) => {
-        console.error(err);
-        throw new DBError(JSON.stringify(err));
+      if (creator === null) {
+        throw new ConflictError(
+          `can not find login user :${req.currentUser!.id} in database`
+        );
       }
-    );
 
-    await new TweetCreatedPublisher(connection).publish({
-      id: tweet.id,
-      description: tweet.description,
-      userId: tweet.userId.toString(),
-      name: creator.name,
-      avatar: creator.avatar,
-      version: tweet.version,
-      createdAt: tweet.createdAt.toISOString(),
-      updatedAt: tweet.updatedAt.toISOString(),
-    });
+      const tweet = await Tweet.create({
+        description,
+        userId: creator.id,
+      }).catch((err) => {
+        throw new DBError(JSON.stringify(err));
+      });
 
-    res.status(201).send(tweet._id);
+      await new TweetCreatedPublisher(connection).publish({
+        id: tweet.id,
+        description: tweet.description,
+        userId: tweet.userId.toString(),
+        name: creator.name,
+        avatar: creator.avatar,
+        version: tweet.version,
+        createdAt: tweet.createdAt.toISOString(),
+        updatedAt: tweet.updatedAt.toISOString(),
+      });
+
+      res.status(201).send(tweet._id);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
   }
 );
 

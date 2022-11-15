@@ -5,7 +5,7 @@ import {
   ConflictError,
   validateRequest,
 } from "@domosideproject/twitter-common";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { Tweet } from "../models/tweet";
 import { param } from "express-validator";
 import { Types } from "mongoose";
@@ -19,30 +19,34 @@ router.delete(
   requireAuth,
   [param("tweetId").custom((id) => Types.ObjectId.isValid(id))],
   validateRequest,
-  async (req: Request, res: Response) => {
-    const { tweetId } = req.params;
-    const loginUser = req.currentUser!.id;
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { tweetId } = req.params;
+      const loginUser = req.currentUser!.id;
 
-    const deletedTweet = await Tweet.findOneAndDelete({
-      userId: loginUser,
-      _id: tweetId,
-    }).catch((err: any) => {
+      const deletedTweet = await Tweet.findOneAndDelete({
+        userId: loginUser,
+        _id: tweetId,
+      }).catch((err: any) => {
+        throw new DBError(JSON.stringify(err));
+      });
+
+      if (deletedTweet === null) {
+        throw new ConflictError(
+          `can not delete tweet: ${tweetId} by user: ${loginUser}. Error possible reasons: 1. can not find tweetId or 2.trying to delete other user tweet.`
+        );
+      }
+
+      await new TweetDeletedPublisher(connection).publish({
+        id: deletedTweet.id,
+        version: deletedTweet.version,
+      });
+
+      res.status(204).send("ok");
+    } catch (err) {
       console.error(err);
-      throw new DBError(JSON.stringify(err));
-    });
-
-    if (deletedTweet === null) {
-      throw new ConflictError(
-        `can not delete tweet: ${tweetId} by user: ${loginUser}. Error possible reasons: 1. can not find tweetId or 2.trying to delete other user tweet.`
-      );
+      next(err);
     }
-
-    await new TweetDeletedPublisher(connection).publish({
-      id: deletedTweet.id,
-      version: deletedTweet.version,
-    });
-
-    res.status(204).send("ok");
   }
 );
 
