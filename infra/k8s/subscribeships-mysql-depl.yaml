@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscribeships-mysql-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscribeships-mysql
+  template:
+    metadata:
+      labels:
+        app: subscribeships-mysql
+    spec:
+      containers:
+        - name: subscribeships-mysql
+          image: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subscribeships-mysql-srv
+spec:
+  selector:
+    app: subscribeships-mysql
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3306
+      targetPort: 3306

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: followships-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: followships
+  template:
+    metadata:
+      labels:
+        app: followships
+    spec:
+      containers:
+        - name: followships
+          image: a71816/micro-twitter-followships
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: TEST_DB_URL
+              value: "mysql://root:password@localhost:3306/followships-mysql-srv"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: followships-srv
+spec:
+  selector:
+    app: followships
+  ports:
+    - name: followships
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
