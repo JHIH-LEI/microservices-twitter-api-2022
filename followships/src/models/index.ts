@@ -1,3 +1,4 @@
+import { FollowshipCreatedContent } from "@domosideproject/twitter-common";
 import {
   CreationOptional,
   InferAttributes,
@@ -9,6 +10,8 @@ import {
   Association,
   ForeignKey,
 } from "sequelize";
+import { connection } from "../app";
+import { FollowshipCreatedPublisher } from "../publishers/followship-created";
 
 let dbURL = "";
 switch (process.env.NODE_ENV) {
@@ -54,10 +57,39 @@ Followship.init(
       autoIncrement: true,
       primaryKey: true,
     },
+    followerId: {
+      type: DataTypes.STRING,
+      unique: "onlyFollowOnce",
+    },
+    followingId: {
+      type: DataTypes.STRING,
+      unique: "onlyFollowOnce",
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
   {
+    hooks: {
+      afterCreate: async function (followship, option) {
+        const followerId = followship.followerId;
+        const follower = await db.User.findOne({ where: { id: followerId } });
+        if (follower === null) {
+          return;
+        }
+
+        // set to sql time
+        followship.createdAt.setMilliseconds(0);
+
+        const content: FollowshipCreatedContent = {
+          followerId,
+          followingId: followship.followingId,
+          name: follower.name,
+          avatar: follower.avatar,
+          createdAt: followship.createdAt.toISOString(),
+        };
+        await new FollowshipCreatedPublisher(connection).publish(content);
+      },
+    },
     sequelize,
     tableName: "followships",
   }

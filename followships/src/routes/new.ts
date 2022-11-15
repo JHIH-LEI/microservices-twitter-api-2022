@@ -29,11 +29,11 @@ router.post(
       );
     }
     // 如果event還來不及處理怎辦？
-    // 不可重複追蹤
 
     try {
-      await db.Followship.findOrCreate({
-        where: { followerId: followingId, followingId },
+      await db.Followship.create({
+        followerId,
+        followingId,
       });
     } catch (error: any) {
       console.error(error);

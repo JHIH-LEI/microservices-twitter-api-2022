@@ -3,6 +3,8 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: `${process.cwd()}/src/.env` });
 process.env.NODE_ENV = "test";
 
+jest.mock("../publishers/followship-created");
+
 declare global {
   var getCookie: (id?: string) => string[];
 }
