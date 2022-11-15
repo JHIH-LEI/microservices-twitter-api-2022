@@ -4,6 +4,7 @@ dotenv.config({ path: `${process.cwd()}/src/.env` });
 process.env.NODE_ENV = "test";
 
 jest.mock("../publishers/followship-created");
+jest.mock("../publishers/followship-deleted");
 
 declare global {
   var getCookie: (id?: string) => string[];

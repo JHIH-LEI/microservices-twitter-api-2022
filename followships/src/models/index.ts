@@ -1,4 +1,7 @@
-import { FollowshipCreatedContent } from "@domosideproject/twitter-common";
+import {
+  FollowshipCreatedContent,
+  FollowshipDeletedContent,
+} from "@domosideproject/twitter-common";
 import {
   CreationOptional,
   InferAttributes,
@@ -12,6 +15,7 @@ import {
 } from "sequelize";
 import { connection } from "../app";
 import { FollowshipCreatedPublisher } from "../publishers/followship-created";
+import { FollowshipDeletedPublisher } from "../publishers/followship-deleted";
 
 let dbURL = "";
 switch (process.env.NODE_ENV) {
@@ -88,6 +92,13 @@ Followship.init(
           createdAt: followship.createdAt.toISOString(),
         };
         await new FollowshipCreatedPublisher(connection).publish(content);
+      },
+      afterDestroy: async function (followship, option) {
+        const content: FollowshipDeletedContent = {
+          followerId: followship.followerId,
+          followingId: followship.followingId,
+        };
+        await new FollowshipDeletedPublisher(connection).publish(content);
       },
     },
     sequelize,

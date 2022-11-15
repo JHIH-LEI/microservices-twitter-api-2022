@@ -16,7 +16,10 @@ router.delete(
     const followingId = req.params.followingId;
 
     try {
-      await db.Followship.destroy({ where: { followingId, followerId } });
+      await db.Followship.destroy({
+        where: { followingId, followerId },
+        individualHooks: true,
+      });
     } catch (err) {
       console.error(err);
       throw new DBError(`db error: ${JSON.stringify(err)}`);
