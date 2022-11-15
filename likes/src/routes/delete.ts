@@ -10,8 +10,6 @@ import {
 import { Like } from "../models/like";
 import { param } from "express-validator";
 import { Types } from "mongoose";
-import { LikeDeletedPublishers } from "../publishers/like-deleted";
-import { connection } from "../app";
 
 router.delete(
   "/:tweetId",

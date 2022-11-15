@@ -5,7 +5,6 @@ import {
   ReplyDeletedEvent,
 } from "@domosideproject/twitter-common";
 import { Message } from "amqplib";
-import { Types } from "mongoose";
 import { listenerChannel } from "../app";
 import { Reply } from "../models/reply";
 
