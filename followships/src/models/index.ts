@@ -42,8 +42,8 @@ class Followship extends Model<
   InferCreationAttributes<Followship>
 > {
   declare id: CreationOptional<number>;
-  declare followerId: ForeignKey<number>;
-  declare followingId: ForeignKey<number>;
+  declare followerId: ForeignKey<string>;
+  declare followingId: ForeignKey<string>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -54,22 +54,6 @@ Followship.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    // followerId: {
-    //   type: DataTypes.INTEGER.UNSIGNED,
-    //   allowNull: false,
-    //   // references: {
-    //   //   model: "Users",
-    //   //   key: "id",
-    //   // },
-    // },
-    // followingId: {
-    //   type: DataTypes.INTEGER.UNSIGNED,
-    //   allowNull: false,
-    //   // references: {
-    //   //   model: "Users",
-    //   //   key: "id",
-    //   // },
-    // },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
@@ -90,7 +74,7 @@ class User extends Model<
   InferAttributes<User, { omit: "followings" | "followers" }>,
   InferCreationAttributes<User>
 > {
-  declare id: number; // from user:created event
+  declare id: string; // from user:created event
   declare name: string; // from user:created event
   declare avatar: string; // from user:created event
   declare account: string; // from user:created event
@@ -111,8 +95,7 @@ class User extends Model<
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       primaryKey: true,
     },
     name: {
@@ -131,6 +114,7 @@ User.init(
     version: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+
       defaultValue: 0,
     },
     createdAt: {
@@ -158,11 +142,12 @@ User.init(
 
         if (incomingVersion !== preVersion + 1) {
           // 版本不符，還有其他版本要等，不許可這次更新
-          throw new Error(
+          console.error(
             `wrong user version:${incomingVersion}, should be: ${
               preVersion + 1
             }`
           );
+          return;
         }
       },
     },

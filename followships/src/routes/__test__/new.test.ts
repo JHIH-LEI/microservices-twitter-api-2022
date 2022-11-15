@@ -8,7 +8,7 @@ it("start follow", async () => {
   jest.setTimeout(10000);
   const [loginUser, targetUser] = await Promise.all([
     User.create({
-      id: 1,
+      id: "1",
       createdAt: new Date(),
       updatedAt: new Date(),
       name: "follower",
@@ -17,7 +17,7 @@ it("start follow", async () => {
       version: 0,
     }),
     User.create({
-      id: 2,
+      id: "2",
       createdAt: new Date(),
       updatedAt: new Date(),
       name: "following me",

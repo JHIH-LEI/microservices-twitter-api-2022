@@ -10,7 +10,7 @@ it("get top 10 user orderBy followers number", async () => {
   // create 12 user
   for (let i = 1; i < 13; i++) {
     const user = await User.create({
-      id: i,
+      id: `${i}`,
       createdAt: new Date(),
       updatedAt: new Date(),
       account: `topUser${i}`,
@@ -54,7 +54,7 @@ it("get top 10 user orderBy followers number", async () => {
   const returnTop3User = res.body[2];
 
   const expectTop1User: TopUserResOne = {
-    id: 1,
+    id: "1",
     name: "user1",
     account: "topUser1",
     avatar: "",
@@ -62,7 +62,7 @@ it("get top 10 user orderBy followers number", async () => {
     totalFollowers: 3,
   };
   const expectTop2User: TopUserResOne = {
-    id: 2,
+    id: "2",
     name: "user2",
     account: "topUser2",
     avatar: "",
@@ -70,7 +70,7 @@ it("get top 10 user orderBy followers number", async () => {
     totalFollowers: 2,
   };
   const expectTop3User: TopUserResOne = {
-    id: 3,
+    id: "3",
     name: "user3",
     account: "topUser3",
     avatar: "",

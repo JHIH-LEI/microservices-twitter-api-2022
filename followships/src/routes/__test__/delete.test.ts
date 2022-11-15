@@ -6,7 +6,7 @@ const { User, Followship } = db;
 
 test("unfollow", async () => {
   const loginUser = await User.create({
-    id: 1,
+    id: "1",
     createdAt: new Date(),
     updatedAt: new Date(),
     name: "follower",
@@ -18,7 +18,7 @@ test("unfollow", async () => {
   });
 
   const targetUser = await User.create({
-    id: 2,
+    id: "2",
     createdAt: new Date(),
     updatedAt: new Date(),
     name: "following me",

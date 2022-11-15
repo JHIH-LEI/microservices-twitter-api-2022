@@ -6,17 +6,21 @@ const { Followship } = db;
 
 it("return target user followings", async () => {
   jest.setTimeout(10000);
-  const targetUserID = 1;
-  await Promise.all([createUser(targetUserID), createUser(2), createUser(3)]);
+  const targetUserID = "1";
+  await Promise.all([
+    createUser(targetUserID),
+    createUser("2"),
+    createUser("3"),
+  ]);
 
   await Followship.create({
     followerId: targetUserID,
-    followingId: 2,
+    followingId: "2",
   });
 
   await Followship.create({
     followerId: targetUserID,
-    followingId: 3,
+    followingId: "3",
   });
 
   const res = await request(app)

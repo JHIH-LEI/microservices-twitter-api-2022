@@ -12,7 +12,7 @@ import { db } from "../models/index";
 const { User, sequelize } = db;
 
 export type TopUserResOne = {
-  id: number;
+  id: string;
   name: string;
   account: string;
   avatar: string;
@@ -67,9 +67,9 @@ router.get(
         having: { totalFollowers: { [Op.gt]: 0 } }, //只要粉絲大於0的人
         limit: 10,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      throw new DBError(error);
+      throw new DBError(JSON.stringify(error));
     }
     res.send(users);
   }

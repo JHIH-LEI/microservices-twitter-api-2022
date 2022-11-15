@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { db } from "../../models/index";
 const { User, Followship } = db;
-export const createUser = async (userId: number) => {
+export const createUser = async (userId: string) => {
   await User.create({
     id: userId,
     name: `user${userId}`,
@@ -15,22 +15,26 @@ export const createUser = async (userId: number) => {
 };
 it("return target user followers", async () => {
   jest.setTimeout(10000);
-  const targetUserId = 1;
-  await Promise.all([createUser(targetUserId), createUser(2), createUser(3)]);
+  const targetUserId = "1";
+  await Promise.all([
+    createUser(targetUserId),
+    createUser("2"),
+    createUser("3"),
+  ]);
 
   await Followship.create({
-    followerId: 2,
+    followerId: "2",
     followingId: targetUserId,
   });
 
   await Followship.create({
-    followerId: 3,
+    followerId: "3",
     followingId: targetUserId,
   });
 
   const res = await request(app)
     .get(`/api/followships/${targetUserId}/followers`)
-    .set("Cookie", global.getCookie(2))
+    .set("Cookie", global.getCookie("2"))
     .expect(200);
   expect(res.body.length).toBe(2);
 
@@ -40,5 +44,7 @@ it("return target user followers", async () => {
   expect(res.body[0].Followers).toHaveProperty("account");
   expect(res.body[0].Followers).toHaveProperty("isFollowings");
 
-  expect(res.body[0].Followers.isFollowings).toBe(res.body[0].id === 1 ? 1 : 0);
+  expect(res.body[0].Followers.isFollowings).toBe(
+    res.body[0].id === "1" ? 1 : 0
+  );
 });
