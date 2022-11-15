@@ -1,4 +1,7 @@
-import { SubscribeshipCreatedContent } from "@domosideproject/twitter-common";
+import {
+  SubscribeshipCreatedContent,
+  SubscribeshipDeletedContent,
+} from "@domosideproject/twitter-common";
 import {
   CreationOptional,
   InferAttributes,
@@ -12,6 +15,7 @@ import {
 } from "sequelize";
 import { connection } from "../app";
 import { SubscribeshipCreatedPublisher } from "../publishers/subscribeship-created";
+import { SubscribeshipDeletedPublisher } from "../publishers/subscribeship-deleted";
 
 let dbURL = "";
 switch (process.env.NODE_ENV) {
@@ -82,6 +86,13 @@ Subscribeship.init(
           avatar: subscriber.avatar,
         };
         await new SubscribeshipCreatedPublisher(connection).publish(content);
+      },
+      afterDestroy: async (subscribeship, options) => {
+        const content: SubscribeshipDeletedContent = {
+          subscriberId: subscribeship.subscriberId,
+          subscribingId: subscribeship.subscribingId,
+        };
+        await new SubscribeshipDeletedPublisher(connection).publish(content);
       },
     },
     sequelize,

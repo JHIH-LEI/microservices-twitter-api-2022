@@ -18,6 +18,7 @@ router.delete(
     try {
       await db.Subscribeship.destroy({
         where: { subscribingId, subscriberId },
+        individualHooks: true,
       });
     } catch (err) {
       console.error(err);
