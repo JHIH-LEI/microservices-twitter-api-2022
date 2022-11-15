@@ -137,6 +137,7 @@ User.init(
 
         if (user.isNewRecord) {
           user.version = 0;
+          return;
         }
 
         if (incomingVersion !== preVersion + 1) {
