@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
 import { User } from "../models/user";
 import jsonwebtoken from "jsonwebtoken";
@@ -37,37 +37,42 @@ router.post(
       .withMessage("password must between 6~50 characters"),
   ],
   validateRequest,
-  async (req: Request, res: Response) => {
-    const { name, email, account, password, checkPassword } =
-      req.body as PostUserRequest;
-
-    if (password !== checkPassword) {
-      throw new BadRequestError("password should match with checkPassword");
-    }
-
-    const user = User.build({ name, email, password, account });
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await user.save();
-    } catch (err: any) {
-      throw new DBError(`DB error: ${err}`);
+      const { name, email, account, password, checkPassword } =
+        req.body as PostUserRequest;
+
+      if (password !== checkPassword) {
+        throw new BadRequestError("password should match with checkPassword");
+      }
+
+      const user = User.build({ name, email, password, account });
+      try {
+        await user.save();
+      } catch (err: any) {
+        throw new DBError(`DB error: ${err}`);
+      }
+
+      const userJWT = jsonwebtoken.sign({ id: user.id }, process.env.JWT_KEY!);
+      // store in cookie
+      req.session = {
+        jwt: userJWT,
+      };
+
+      await new UserCreatedPublisher(connection).publish({
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString(),
+        account: user.account,
+        version: user.version,
+      });
+      res.status(201).send(user);
+    } catch (err) {
+      console.error(err);
+      next(err);
     }
-
-    const userJWT = jsonwebtoken.sign({ id: user.id }, process.env.JWT_KEY!);
-    // store in cookie
-    req.session = {
-      jwt: userJWT,
-    };
-
-    await new UserCreatedPublisher(connection).publish({
-      id: user.id,
-      name: user.name,
-      avatar: user.avatar,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-      account: user.account,
-      version: user.version,
-    });
-    res.status(201).send(user);
   }
 );
 
