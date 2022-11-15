@@ -43,13 +43,9 @@ const setupRabbitMQ = async () => {
   listenerChannel = await connection.createChannel();
   senderChannel = await connection.createChannel();
 
-  // @ts-ignore
   await new UserCreatedConsumer(connection).consumeFromQueue();
-  // @ts-ignore
   await new UserUpdatedConsumer(connection).consumeFromQueue();
-  // @ts-ignore
   await new TweetCreatedConsumer(connection).consumeFromQueue();
-  // @ts-ignore
   await new TweetDeletedConsumer(connection).consumeFromQueue();
 };
 

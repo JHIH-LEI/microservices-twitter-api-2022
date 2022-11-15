@@ -11,7 +11,6 @@ import { Tweet } from "../models/tweet";
 
 export class TweetCreatedConsumer extends Listener<TweetCreatedEvent> {
   readonly queue = Queue.TweetCreated;
-  // @ts-ignore
   readonly channel = listenerChannel;
 
   async consumeCallBack(

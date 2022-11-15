@@ -59,7 +59,6 @@ router.post(
       avatar: user!.avatar,
     };
 
-    // @ts-ignore
     await new ReplyCreatedPublisher(connection).publish(content);
 
     res.status(201).send({

@@ -10,7 +10,6 @@ import { User } from "../models/user";
 
 export class UserUpdatedConsumer extends Listener<UserUpdatedEvent> {
   readonly queue = Queue.UserUpdated;
-  // @ts-ignore
   readonly channel = listenerChannel;
 
   async consumeCallBack(

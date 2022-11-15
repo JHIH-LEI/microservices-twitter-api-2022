@@ -11,7 +11,6 @@ import { User } from "../models/user";
 
 export class UserCreatedConsumer extends Listener<UserCreatedEvent> {
   readonly queue = Queue.UserCreated;
-  // @ts-ignore
   readonly channel = listenerChannel;
 
   async consumeCallBack(

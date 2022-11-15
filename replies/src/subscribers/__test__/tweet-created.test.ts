@@ -25,7 +25,6 @@ it("create new tweet when receive content from tweet:created queue", async () =>
 
   const message = {} as Message;
 
-  // @ts-ignore
   await new TweetCreatedConsumer(connection).consumeCallBack(
     contentFromQueue,
     message

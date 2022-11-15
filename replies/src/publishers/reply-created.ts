@@ -8,6 +8,5 @@ import amqp from "amqplib";
 
 export class ReplyCreatedPublisher extends Publisher<ReplyCreatedEvent> {
   readonly queue = Queue.ReplyCreated;
-  // @ts-ignore
   readonly channel: amqp.Channel = senderChannel;
 }

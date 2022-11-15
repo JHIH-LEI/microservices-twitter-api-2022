@@ -38,7 +38,6 @@ it("successfully update user", async () => {
   };
 
   const message = {} as Message;
-  // @ts-ignore
   await new UserUpdatedConsumer(connection).consumeCallBack(
     updatedContent,
     message
@@ -86,7 +85,6 @@ it("do not update user because incoming version too new", async () => {
   };
 
   const message = {} as Message;
-  // @ts-ignore
   await new UserUpdatedConsumer(connection).consumeCallBack(
     updatedContent,
     message

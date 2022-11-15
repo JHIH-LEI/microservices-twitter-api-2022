@@ -39,7 +39,6 @@ it("deleted tweet and all related replies and then publish to reply:deleted", as
 
   const message = {} as Message;
 
-  // @ts-ignore
   await new TweetDeletedConsumer(connection).consumeCallBack(
     contentFromQueue,
     message
@@ -66,7 +65,6 @@ it("skip handle event because tweet have not exist. should wait for create first
 
   const message = {} as Message;
 
-  // @ts-ignore
   await new TweetDeletedConsumer(connection).consumeCallBack(
     contentFromQueue,
     message

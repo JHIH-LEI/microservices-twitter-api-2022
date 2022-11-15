@@ -10,7 +10,6 @@ import { Tweet } from "../models/tweet";
 
 export class TweetDeletedConsumer extends Listener<TweetDeletedEvent> {
   readonly queue = Queue.TweetDeleted;
-  // @ts-ignore
   readonly channel = listenerChannel;
 
   async consumeCallBack(

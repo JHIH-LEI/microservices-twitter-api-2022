@@ -69,7 +69,7 @@ replySchema.post("remove", async function () {
     // @ts-ignore can not know our ReplyDoc type
     version: this.version,
   };
-  // @ts-ignore
+
   await new ReplyDeletedPublisher(connection).publish(content);
 });
 
@@ -80,7 +80,6 @@ replySchema.pre("deleteMany", async function () {
   if (tweetId) {
     const deletedLikes = await Reply.find({ tweetId });
     if (deletedLikes.length) {
-      // @ts-ignore
       const publisher = new ReplyDeletedPublisher(connection);
 
       // 我想要拿到像是這樣的格式：（用Promise.all比起用forEach一個一個await快）

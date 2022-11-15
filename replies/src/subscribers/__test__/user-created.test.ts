@@ -25,7 +25,6 @@ it("create new user when receive content from user:created queue", async () => {
 
   const message = {} as Message;
 
-  // @ts-ignore
   await new UserCreatedConsumer(connection).consumeCallBack(
     contentFromQueue,
     message
