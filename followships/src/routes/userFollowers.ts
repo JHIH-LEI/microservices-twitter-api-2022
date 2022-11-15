@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import {
   requireAuth,
   currentUser,
@@ -25,12 +25,11 @@ router.get(
   "/:userId/followers",
   currentUser,
   requireAuth,
-  async (req: Request, res: Response) => {
-    const targetUser = req.params.userId;
-
-    let users;
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      users = await db.User.findAll({
+      const targetUser = req.params.userId;
+
+      const users = await db.User.findAll({
         attributes: [],
         raw: true,
         nest: true,
@@ -57,17 +56,19 @@ router.get(
           },
         ],
         order: [[db.sequelize.col("Followers.Followship.createdAt"), "DESC"]],
+      }).catch((err: any) => {
+        throw new DBError(JSON.stringify(err));
       });
-    } catch (err: any) {
-      console.error("db error", err);
-      throw new DBError(err);
-    }
 
-    if (users === null) {
-      throw new ConflictError("user not exist");
+      if (users === null) {
+        throw new ConflictError("user not exist");
+      }
+
+      res.send(users);
+    } catch (err) {
+      console.error(err);
+      next(err);
     }
-    console.log("userFollowers:", users);
-    res.send(users);
   }
 );
 export { router as userFollowers };

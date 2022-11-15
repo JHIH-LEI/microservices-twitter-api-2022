@@ -25,6 +25,6 @@ export class UserCreatedConsumer extends Listener<UserCreatedEvent> {
       name,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
-    });
+    }).catch((err) => console.error(JSON.stringify(err)));
   }
 }

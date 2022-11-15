@@ -3,7 +3,7 @@ import {
   DBError,
   requireAuth,
 } from "@domosideproject/twitter-common";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 // import { sequelize } from "../index";
 import { Op } from "sequelize";
 // import { User } from "../models/user";
@@ -27,11 +27,9 @@ router.get(
   "/topUser",
   currentUser,
   requireAuth,
-  async (req: Request, res: Response) => {
-    // TODO: db error
-    let users;
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      users = await db.User.findAll({
+      const users = await db.User.findAll({
         raw: true,
         nest: true,
         group: "User.id",
@@ -65,12 +63,15 @@ router.get(
         subQuery: false, //避免因查詢多張表造成limit失常
         having: { totalFollowers: { [Op.gt]: 0 } }, //只要粉絲大於0的人
         limit: 10,
+      }).catch((error: any) => {
+        throw new DBError(JSON.stringify(error));
       });
-    } catch (error: any) {
-      console.error(error);
-      throw new DBError(JSON.stringify(error));
+
+      res.send(users);
+    } catch (err) {
+      console.error(err);
+      next(err);
     }
-    res.send(users);
   }
 );
 
