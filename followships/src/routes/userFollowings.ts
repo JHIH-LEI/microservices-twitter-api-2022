@@ -5,10 +5,7 @@ import {
   DBError,
   ConflictError,
 } from "@domosideproject/twitter-common";
-// import { sequelize } from "../index";
-// import { User } from "../models/user";
 import { db } from "../models/index";
-const { User, sequelize } = db;
 const router = express.Router();
 
 type UserFollowingsResOne = {
@@ -32,13 +29,13 @@ router.get(
     const targetUser = req.params.userId;
     let users;
     try {
-      users = await User.findAll({
+      users = await db.User.findAll({
         where: { id: targetUser },
         raw: true,
         nest: true,
         attributes: [],
         include: {
-          model: User,
+          model: db.User,
           as: "Followings",
           attributes: [
             "id",
@@ -46,7 +43,7 @@ router.get(
             "account",
             "avatar",
             [
-              sequelize.literal(
+              db.sequelize.literal(
                 `EXISTS (SELECT 1 FROM Followships WHERE followerId = ${targetUser} AND followingId = Followings.id)`
               ),
               "isFollowings",
@@ -54,7 +51,7 @@ router.get(
           ],
           through: { attributes: [] },
         },
-        order: [[sequelize.col("Followings.Followship.createdAt"), "DESC"]],
+        order: [[db.sequelize.col("Followings.Followship.createdAt"), "DESC"]],
       });
     } catch (err: any) {
       console.error("db error", err);

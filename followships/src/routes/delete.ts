@@ -5,7 +5,6 @@ import {
 } from "@domosideproject/twitter-common";
 import express, { Request, Response } from "express";
 import { db } from "../models/index";
-const { Followship } = db;
 const router = express.Router();
 
 router.delete(
@@ -17,7 +16,7 @@ router.delete(
     const followingId = req.params.followingId;
 
     try {
-      await Followship.destroy({ where: { followingId, followerId } });
+      await db.Followship.destroy({ where: { followingId, followerId } });
     } catch (err) {
       console.error(err);
       throw new DBError(`db error: ${JSON.stringify(err)}`);

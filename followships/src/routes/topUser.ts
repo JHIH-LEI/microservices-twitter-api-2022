@@ -9,7 +9,6 @@ import { Op } from "sequelize";
 // import { User } from "../models/user";
 const router = express.Router();
 import { db } from "../models/index";
-const { User, sequelize } = db;
 
 export type TopUserResOne = {
   id: string;
@@ -32,7 +31,7 @@ router.get(
     // TODO: db error
     let users;
     try {
-      users = await User.findAll({
+      users = await db.User.findAll({
         raw: true,
         nest: true,
         group: "User.id",
@@ -42,13 +41,13 @@ router.get(
           "account",
           "avatar",
           [
-            sequelize.literal(
+            db.sequelize.literal(
               "(SELECT COUNT(DISTINCT id) FROM Followships WHERE followingId = User.id)"
             ),
             "totalFollowers",
           ],
           [
-            sequelize.literal(
+            db.sequelize.literal(
               `EXISTS (SELECT 1 FROM Followships WHERE followerId = ${
                 req.currentUser!.id
               } AND followingId = User.id)`
@@ -57,12 +56,12 @@ router.get(
           ],
         ],
         include: {
-          model: User,
+          model: db.User,
           as: "Followers",
           attributes: [],
           through: { attributes: [] },
         },
-        order: [[sequelize.col("totalFollowers"), "DESC"]],
+        order: [[db.sequelize.col("totalFollowers"), "DESC"]],
         subQuery: false, //避免因查詢多張表造成limit失常
         having: { totalFollowers: { [Op.gt]: 0 } }, //只要粉絲大於0的人
         limit: 10,
