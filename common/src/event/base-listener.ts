@@ -7,8 +7,7 @@ export abstract class Listener<E extends Event> {
   abstract channel: amqp.Channel;
   abstract consumeCallBack(
     parsedContent: E["content"],
-    message: amqp.Message,
-    socket?: any // TODO: 可能有更好的做法，未來重構，這是專門給NotificationCreatedConsumer用的
+    message: amqp.Message
   ): Promise<void>;
 
   constructor(connection: amqp.Connection) {
