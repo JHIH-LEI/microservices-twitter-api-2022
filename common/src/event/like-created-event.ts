@@ -4,8 +4,6 @@ export interface LikeCreatedContent {
   id: string;
   tweetId: string;
   userId: string;
-  name: string;
-  avatar: string;
   createdAt: string;
 }
 
