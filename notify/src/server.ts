@@ -6,6 +6,7 @@ import amqp from "amqplib";
 const app = express();
 const server = http.createServer(app);
 import { Server } from "socket.io";
+import Redis from "ioredis";
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -17,12 +18,18 @@ if (!process.env.JWT_KEY) {
   throw new Error("missing JWT_KEY env variable");
 }
 
+if (!process.env.REDIS_URL) {
+  throw new Error("missing REDIS_URL env variable");
+}
+
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData
 >(server);
+
+const redis = new Redis(process.env.REDIS_URL);
 
 let connection: amqp.Connection;
 let listenerChannel: amqp.Channel;
@@ -56,4 +63,4 @@ io.on("connection", (socket) => {
   });
 });
 
-export { server, listenerChannel, connection };
+export { server, listenerChannel, connection, redis };
