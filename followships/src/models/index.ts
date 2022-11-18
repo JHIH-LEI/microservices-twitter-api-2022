@@ -1,6 +1,7 @@
 import {
   FollowshipCreatedContent,
   FollowshipDeletedContent,
+  getDBUrlBaseNodeEnv,
 } from "@domosideproject/twitter-common";
 import {
   CreationOptional,
@@ -17,29 +18,9 @@ import { connection } from "../app";
 import { FollowshipCreatedPublisher } from "../publishers/followship-created";
 import { FollowshipDeletedPublisher } from "../publishers/followship-deleted";
 
-let dbURL = "";
-switch (process.env.NODE_ENV) {
-  case "dev": {
-    if (!process.env.DEV_DB_URL) {
-      throw new Error("missing DEV_DB_URL env variable");
-    }
-    dbURL = process.env.DEV_DB_URL;
-    break;
-  }
-  case "prod": {
-    if (!process.env.PROD_DB_URL) {
-      throw new Error("missing PROD_DB_URL env variable");
-    }
-    dbURL = process.env.PROD_DB_URL;
-    break;
-  }
-  case "test": {
-    if (!process.env.TEST_DB_URL) {
-      throw new Error("missing TEST_DB_URL env variable");
-    }
-    dbURL = process.env.TEST_DB_URL;
-    break;
-  }
+const dbURL = getDBUrlBaseNodeEnv();
+if (!dbURL) {
+  throw new Error("missing dbURL env variable");
 }
 
 const sequelize = new Sequelize(dbURL);
@@ -76,10 +57,6 @@ Followship.init(
     hooks: {
       afterCreate: async function (followship, option) {
         const followerId = followship.followerId;
-        const follower = await db.User.findOne({ where: { id: followerId } });
-        if (follower === null) {
-          return;
-        }
 
         // set to sql time
         followship.createdAt.setMilliseconds(0);
@@ -87,8 +64,6 @@ Followship.init(
         const content: FollowshipCreatedContent = {
           followerId,
           followingId: followship.followingId,
-          name: follower.name,
-          avatar: follower.avatar,
           createdAt: followship.createdAt.toISOString(),
         };
         await new FollowshipCreatedPublisher(connection).publish(content);
