@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { redis } from "../index";
+import { redis } from "../redisConfig";
 
 jest.mock("../mongodbConfig");
 
@@ -17,15 +17,14 @@ beforeAll(async () => {
   await mongoose.connect(mongoUri, {});
 });
 
-beforeEach(async () => {
+beforeEach(() => {});
+
+afterEach(async () => {
   const collections = await mongoose.connection.db.collections();
 
   for (const collection of collections) {
     await collection.deleteMany({});
   }
-});
-
-afterEach(() => {
   jest.clearAllMocks();
 });
 
