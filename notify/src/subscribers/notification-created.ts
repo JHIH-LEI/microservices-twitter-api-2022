@@ -23,7 +23,7 @@ export class NotificationCreatedConsumer extends Listener<NotificationCreatedEve
     message: Message
   ): Promise<void> {
     const { id, main, createdAt, type, userId, notifyUserIds } = parsedContent;
-    console.log("NotificationCreatedConsumer");
+
     const notifySocketsIn2D = await Promise.all(
       notifyUserIds.map((receiverId) =>
         RedisOperator.getNotifyUserSocketIds(receiverId)
@@ -75,11 +75,7 @@ export class NotificationCreatedConsumer extends Listener<NotificationCreatedEve
     };
 
     notifySockets.forEach((socketId) => {
-      try {
-        io.to(socketId).emit("notify", notifyContent);
-      } catch (err) {
-        console.error(err);
-      }
+      io.to(socketId).emit("notify", notifyContent);
     });
   }
 }
