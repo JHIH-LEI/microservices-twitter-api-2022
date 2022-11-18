@@ -1,7 +1,7 @@
 export enum NODEENV {
   Development = "dev",
   Test = "test",
-  Production = "prod",
+  Production = "production",
 }
 
 /**
