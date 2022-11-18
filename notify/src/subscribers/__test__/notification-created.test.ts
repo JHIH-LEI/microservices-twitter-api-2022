@@ -1,3 +1,4 @@
+import { Connection, Channel } from "amqplib";
 import {
   NotificationCreatedContent,
   NotificationType,
@@ -8,7 +9,7 @@ import { io as Client, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { Notification, NotificationAttrs } from "../../models/notification";
 import { User } from "../../models/user";
-import { connection, io as serverSocket, redis } from "../../index";
+import { io as serverSocket } from "../../index";
 import { RedisOperator } from "../../services/redis-operator";
 import { NotifyPopupContent } from "../../types";
 import { NotificationCreatedConsumer } from "../notification-created";
@@ -107,7 +108,13 @@ describe("notification-created", () => {
     const triggerUser = await saveTriggerUserInDB(triggerId);
 
     // it contain 2 user (user2, user3) should be notify
-    await new NotificationCreatedConsumer(connection).consumeCallBack(
+
+    // @ts-ignore
+    const connection = {} as Connection;
+    // @ts-ignore
+    const channel = {} as Channel;
+
+    await new NotificationCreatedConsumer(connection, channel).consumeCallBack(
       content,
       message
     );

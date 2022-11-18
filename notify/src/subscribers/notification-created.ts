@@ -6,17 +6,22 @@ import {
   NotificationCreatedEvent,
   Queue,
 } from "@domosideproject/twitter-common";
-import { Channel, Message } from "amqplib";
+import { Channel, Message, Connection } from "amqplib";
 import mongoose from "mongoose";
 import { Notification } from "../models/notification";
 import { User } from "../models/user";
-import { listenerChannel, io } from "../index";
+import { io } from "../index";
 import { RedisOperator } from "../services/redis-operator";
 import { NotifyPopupContent } from "../types";
 
 export class NotificationCreatedConsumer extends Listener<NotificationCreatedEvent> {
   readonly queue = Queue.NotificationCreated;
-  readonly channel: Channel = listenerChannel;
+  channel;
+
+  constructor(connection: Connection, channel: Channel) {
+    super(connection);
+    this.channel = channel;
+  }
 
   async consumeCallBack(
     parsedContent: NotificationCreatedContent,
