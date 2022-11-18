@@ -17,6 +17,7 @@ import jwt from "jsonwebtoken";
 import { RedisOperator } from "./services/redis-operator";
 import { DBError } from "@domosideproject/twitter-common";
 import { setupMongoose } from "./mongodbConfig";
+import { NotificationCreatedConsumer } from "./subscribers/notification-created";
 
 if (!process.env.JWT_KEY) {
   throw new Error("missing JWT_KEY env variable");
@@ -73,8 +74,13 @@ io.use(async function (socket, next) {
     next();
   }
   next(new Error("Need login"));
-}).on("connection", (socket) => {
+}).on("connection", async (socket) => {
   // rabbitMQ consume notification:created
+  await new NotificationCreatedConsumer(connection)
+    .consumeFromQueue()
+    .catch((err) => {
+      console.error(err);
+    });
   // 處理isRead事件 => 根據給的id去找到 Notification doc把 isRead: true, emit給該user的socket：這個通知已讀了。
 
   socket.on("disconnect", async () => {
