@@ -17,6 +17,7 @@ export interface InterServerEvents {}
 
 export interface SocketData {
   userId: string;
+  socketId: string;
 }
 
 // 前端會根據這個來渲染跳出的通知

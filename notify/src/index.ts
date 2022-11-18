@@ -58,7 +58,9 @@ io.use(async function (socket, next) {
         socket.handshake.auth.token,
         process.env.JWT_KEY!
       ) as { id: string };
+
       socket.data.userId = payload.id;
+      socket.data.socketId = socket.id;
     } catch (err) {
       next(new Error("jwt invalid"));
     }
@@ -72,20 +74,18 @@ io.use(async function (socket, next) {
   }
   next(new Error("Need login"));
 }).on("connection", (socket) => {
-  // 拿到userId
-  // 存socketId進去
-
   // rabbitMQ consume notification:created
   // 處理isRead事件 => 根據給的id去找到 Notification doc把 isRead: true, emit給該user的socket：這個通知已讀了。
 
-  socket.on("disconnect", async (reason) => {
-    // 去socketData拿到userId
-    // 將socketId從redis userId: {socketIds}移除
-    // TODO socketData要放socketId,因為disconnect socket.id會變未定義
-    // await RedisOperator.removeNotifyUserSocketIds({
-    //   userId: socket.data.userId!,
-    //   socketId: socket.id,
-    // });
+  socket.on("disconnect", async () => {
+    // jest test在執行過程中會斷線，原因是transport close，但測試還沒跑完，不可清除socket資料
+    // TODO: 測試disconnect的時候有沒有把socketId從redis移除
+    if (process.env.NODE_ENV !== "test") {
+      await RedisOperator.removeNotifyUserSocketIds({
+        userId: socket.data.userId!,
+        socketId: socket.data.socketId!,
+      });
+    }
   });
 });
 
