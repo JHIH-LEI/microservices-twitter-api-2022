@@ -1,5 +1,5 @@
 import { DBError } from "@domosideproject/twitter-common";
-import { redis } from "../index";
+import { redis } from "../redisConfig";
 
 export class RedisOperator {
   /**

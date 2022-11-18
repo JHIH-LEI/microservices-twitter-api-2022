@@ -6,7 +6,6 @@ import amqp from "amqplib";
 const app = express();
 const server = http.createServer(app);
 import { Server } from "socket.io";
-import Redis from "ioredis";
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -33,8 +32,6 @@ export const io = new Server<
   InterServerEvents,
   SocketData
 >(server, { pingTimeout: 270000, pingInterval: 270000 });
-
-const redis = new Redis(process.env.REDIS_URL);
 
 setupMongoose();
 
@@ -96,5 +93,3 @@ io.use(async function (socket, next) {
 server.listen(3000, () => {
   console.log("notify socket server listening on 3000");
 });
-
-export { redis };
