@@ -18,6 +18,7 @@ import { DBError } from "@domosideproject/twitter-common";
 import { setupMongoose } from "./mongodbConfig";
 import { NotificationCreatedConsumer } from "./subscribers/notification-created";
 import { emitNotificationCounts } from "./events/emit/notificationCounts";
+import { onIsReadCallBack } from "./events/on/isRead";
 
 if (!process.env.JWT_KEY) {
   throw new Error("missing JWT_KEY env variable");
@@ -78,6 +79,16 @@ io.use(async function (socket, next) {
   next(new Error("Need login"));
 }).on("connection", async (socket) => {
   // 處理isRead事件 => 根據給的id去找到 Notification doc把 isRead: true, emit給該user的socket：這個通知已讀了。
+
+  socket.on("isRead", async (notificationId: string) => {
+    await onIsReadCallBack({
+      notificationId,
+      socketId: socket.data.socketId!,
+      io,
+    }).catch((err) => {
+      console.error(err);
+    });
+  });
 
   await emitNotificationCounts({
     socketId: socket.data.socketId!,

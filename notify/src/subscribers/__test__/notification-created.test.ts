@@ -29,7 +29,7 @@ jest.setTimeout(12000);
 // mock掉不相關的event免得互相干擾，裡面會mock io.to.emit，若沒有把其他也會emit的事件mock掉（不執行），就會造成預期錯誤。
 // 舉例來說：這邊其中一個測試看notification-created有無正確emit notify event 給特定socketId，這時會去看spyOn的io.to.emit呼叫的次數，若此時沒有先mock掉其他也會io.to.emit的event，則其他不相關的event呼叫次數也會被紀錄，造成每次有新的event都要更新這份測試檔。這也是為啥要把event都包成一個function，便於測試時mock掉不相關的event。
 
-// 但麻煩的事，每多一個事件，都要去每個其他不相關的event測試檔mock他
+// 但麻煩的事，每多一個在on('connection')中emit事件，都要在這mock他，因為我這隻測試檔確實連結到Socket server了
 
 jest.mock("../../events/emit/notificationCounts");
 
