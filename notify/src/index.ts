@@ -36,9 +36,6 @@ export const io = new Server<
 
 const redis = new Redis(process.env.REDIS_URL);
 
-let connection: amqp.Connection;
-let listenerChannel: amqp.Channel;
-
 setupMongoose();
 
 const setupRabbitMQ = async () => {
@@ -46,8 +43,8 @@ const setupRabbitMQ = async () => {
     throw new Error("RABBITMQ_URL env is required");
   }
 
-  connection = await amqp.connect(process.env.RABBITMQ_URL!);
-  listenerChannel = await connection.createChannel();
+  const connection = await amqp.connect(process.env.RABBITMQ_URL!);
+  const listenerChannel = await connection.createChannel();
 
   new NotificationCreatedConsumer(connection, listenerChannel)
     .consumeFromQueue()
