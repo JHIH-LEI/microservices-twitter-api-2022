@@ -40,6 +40,7 @@ let connection: amqp.Connection;
 let listenerChannel: amqp.Channel;
 
 setupMongoose();
+
 const setupRabbitMQ = async () => {
   if (!process.env.RABBITMQ_URL) {
     throw new Error("RABBITMQ_URL env is required");
@@ -47,6 +48,12 @@ const setupRabbitMQ = async () => {
 
   connection = await amqp.connect(process.env.RABBITMQ_URL!);
   listenerChannel = await connection.createChannel();
+
+  new NotificationCreatedConsumer(connection, listenerChannel)
+    .consumeFromQueue()
+    .catch((err) => {
+      console.error(err);
+    });
 };
 
 setupRabbitMQ();
@@ -75,12 +82,6 @@ io.use(async function (socket, next) {
   }
   next(new Error("Need login"));
 }).on("connection", async (socket) => {
-  // rabbitMQ consume notification:created
-  await new NotificationCreatedConsumer(connection)
-    .consumeFromQueue()
-    .catch((err) => {
-      console.error(err);
-    });
   // 處理isRead事件 => 根據給的id去找到 Notification doc把 isRead: true, emit給該user的socket：這個通知已讀了。
 
   socket.on("disconnect", async () => {
@@ -99,4 +100,4 @@ server.listen(3000, () => {
   console.log("notify socket server listening on 3000");
 });
 
-export { listenerChannel, connection, redis };
+export { redis };
