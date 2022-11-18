@@ -1,18 +1,17 @@
 import { NotificationType } from "@domosideproject/twitter-common";
 import mongoose from "mongoose";
 
-interface NotificationAttrs {
+export interface NotificationAttrs {
   id: mongoose.Types.ObjectId;
   type: NotificationType;
   main: string;
   isRead: boolean;
   createdAt: Date;
-  updatedAt: Date;
   triggerId: mongoose.Types.ObjectId;
   receiverId: mongoose.Types.ObjectId;
 }
 
-interface NotificationDoc extends mongoose.Document {
+export interface NotificationDoc extends mongoose.Document {
   id: mongoose.Types.ObjectId;
   type: NotificationType;
   main: string;
