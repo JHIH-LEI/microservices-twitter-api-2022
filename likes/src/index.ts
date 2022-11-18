@@ -1,3 +1,4 @@
+import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
 import mongoose from "mongoose";
 import { app } from "./app";
 
@@ -7,12 +8,7 @@ const start = async () => {
     throw new Error("missing JWT_KEY env variable");
   }
 
-  const MONGO_URI =
-    process.env.NODE_ENV === "test"
-      ? process.env.TEST_DB_URL
-      : process.env.NODE_ENV === "prod"
-      ? process.env.PROD_DB_URL
-      : process.env.DEV_DB_URL;
+  const MONGO_URI = getDBUrlBaseNodeEnv();
 
   if (!MONGO_URI) {
     throw new Error("missing db url env variable");
