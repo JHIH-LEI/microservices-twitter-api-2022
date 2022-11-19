@@ -21,7 +21,6 @@ app.use(
 
 import setupRoutes from "./routes/index";
 setupRoutes(app);
-// app.use("/api/tweets",tweetRouter)
 
 app.all("*", () => {
   throw new NotFoundError("can not find route");
