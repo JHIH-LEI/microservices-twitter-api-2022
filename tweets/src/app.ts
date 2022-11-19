@@ -3,17 +3,8 @@ dotenv.config({ path: `${process.cwd()}/src/.env` });
 import { json } from "body-parser";
 import express from "express";
 import cookieSession from "cookie-session";
-import { showTweetRouter } from "./routes/show";
 import { errorHandler, NotFoundError } from "@domosideproject/twitter-common";
-import { updateTweetRouter } from "./routes/update";
-import { deleteTweetRouter } from "./routes/delete";
-import { newTweetRouter } from "./routes/new";
-import { indexTweetRouter } from "./routes/index";
 import amqp from "amqplib";
-import { LikeCreatedConsumer } from "./subscribers/like-created";
-import { LikeDeletedConsumer } from "./subscribers/like-deleted";
-import { ReplyCreatedConsumer } from "./subscribers/reply-created";
-import { ReplyDeletedConsumer } from "./subscribers/reply-deleted";
 import { UserCreatedConsumer } from "./subscribers/user-created";
 import { UserUpdatedConsumer } from "./subscribers/user-updated";
 
@@ -28,11 +19,9 @@ app.use(
   })
 );
 
-app.use("/api/tweets", showTweetRouter);
-app.use("/api/tweets", updateTweetRouter);
-app.use("/api/tweets", deleteTweetRouter);
-app.use("/api/tweets", newTweetRouter);
-app.use("/api/tweets", indexTweetRouter);
+import setupRoutes from "./routes/index";
+setupRoutes(app);
+// app.use("/api/tweets",tweetRouter)
 
 app.all("*", () => {
   throw new NotFoundError("can not find route");
@@ -48,12 +37,8 @@ const setupRabbitMQ = async () => {
   connection = await amqp.connect(process.env.RABBITMQ_URL!);
   listenerChannel = await connection.createChannel();
   senderChannel = await connection.createChannel();
-  await new LikeCreatedConsumer(connection).consumeFromQueue();
-  await new LikeDeletedConsumer(connection).consumeFromQueue();
-  await new ReplyCreatedConsumer(connection).consumeFromQueue();
-  await new ReplyDeletedConsumer(connection).consumeFromQueue();
-  await new UserCreatedConsumer(connection).consumeFromQueue();
-  await new UserUpdatedConsumer(connection).consumeFromQueue();
+  new UserCreatedConsumer(connection).consumeFromQueue();
+  new UserUpdatedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();
