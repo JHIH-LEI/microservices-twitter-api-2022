@@ -17,10 +17,6 @@ export interface NotificationCreatedContent {
   createdAt: string;
   type: NotificationType;
   main: string;
-  user: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
+  userId: string;
   notifyUserIds: string[];
 }

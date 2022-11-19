@@ -8,7 +8,6 @@ export interface ReplyCreatedContent {
   tweetId: string;
   comment: string;
   userId: string;
-  avatar: string;
   createdAt: string;
   updatedAt: string;
   version: number;
