@@ -6,13 +6,17 @@
 
 [測試檔案紀錄](https://docs.google.com/spreadsheets/d/1b6o0sJsoG7D1afKGW2jFwDmLbTK6MJdR0QmhvV3AjcU/edit?usp=sharing)
 
-<img width="766" alt="截圖 2022-11-08 下午2 59 47" src="https://user-images.githubusercontent.com/66233452/200496169-1fed58d3-c095-4db7-b971-651301f7e99e.png">
-
-<img width="706" alt="截圖 2022-11-08 下午3 02 38" src="https://user-images.githubusercontent.com/66233452/200496582-f4a6f2be-e08f-4e6b-a147-ef35fcc05336.png">
-
 ### 專案前身
 
 重構之前的[Monolithic Simple Twitter API repo 可點此](https://github.com/JHIH-LEI/twitter-api-2020)，[live demo點此](https://tzynwang.github.io/simple-twitter-frontend/#/login)，
+
+
+Before：
+<img width="766" alt="截圖 2022-11-08 下午2 59 47" src="https://user-images.githubusercontent.com/66233452/200496169-1fed58d3-c095-4db7-b971-651301f7e99e.png">
+
+After：
+![](https://i.imgur.com/QLcSoca.png)
+
 
 # 專案介紹：
 
@@ -26,11 +30,14 @@
 因為是將服務分離，會有資料的問題需要處理，資料的同步利用了**async**的方法：**Event Bus**來處理，這邊採用了RabbitMQ來實作，為了處理concurrency的問題，在資料中加上version欄位來管理。
 
 
-![](https://i.imgur.com/jeqCvq8.png)
+![](https://i.imgur.com/ALDk5u1.png)
 
-管理不同容器使用了kubenete，詳細的設定檔可至infra/k8s查看，未來會在實作CICD的流程。
+在event publish的部分多半是利用hook的方式處理。
+
+而為了方便管理不同容器採用了kubenete，詳細的設定檔可至infra/k8s查看，未來會在實作CICD的流程。
 
 # 功能
+（使用者驗證的邏輯打包成npm package讓每個服務都能用）
 前台：
 
 * 使用者能新增推文、回覆推文、喜歡推文
@@ -38,9 +45,12 @@
 * 使用者能編輯個人資料（上傳背景及大頭照尚未實踐，未來希望是在優化方面能夠上傳到專門存放檔案的雲端服務，原本是仰賴開源服務，可見舊專案）
 * 通知系統
 
-（使用者驗證的邏輯打包成npm package讓每個服務都能用）
+![](https://i.imgur.com/AgOEaCq.png)
 
-![](https://i.imgur.com/hD4E3rR.jpg)
+
+Notify Server：
+
+![](https://i.imgur.com/FEfej46.png)
 
 
 ![](https://i.imgur.com/OaLb6al.png)
