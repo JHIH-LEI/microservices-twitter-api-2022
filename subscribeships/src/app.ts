@@ -42,7 +42,7 @@ const setupRabbitMQ = async () => {
   senderChannel = await connection.createChannel();
   listenerChannel = await connection.createChannel();
 
-  await new UserCreatedConsumer(connection).consumeFromQueue();
+  new UserCreatedConsumer(connection).consumeFromQueue();
 };
 
 setupRabbitMQ();

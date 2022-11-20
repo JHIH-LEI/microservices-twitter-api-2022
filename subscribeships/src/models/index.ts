@@ -17,32 +17,11 @@ import { connection } from "../app";
 import { SubscribeshipCreatedPublisher } from "../publishers/subscribeship-created";
 import { SubscribeshipDeletedPublisher } from "../publishers/subscribeship-deleted";
 
-let dbURL = "";
-switch (process.env.NODE_ENV) {
-  case "dev": {
-    if (!process.env.DEV_DB_URL) {
-      throw new Error("missing DEV_DB_URL env variable");
-    }
-    dbURL = process.env.DEV_DB_URL;
-    break;
-  }
-  case "prod": {
-    if (!process.env.PROD_DB_URL) {
-      throw new Error("missing PROD_DB_URL env variable");
-    }
-    dbURL = process.env.PROD_DB_URL;
-    break;
-  }
-  case "test": {
-    if (!process.env.TEST_DB_URL) {
-      throw new Error("missing TEST_DB_URL env variable");
-    }
-    dbURL = process.env.TEST_DB_URL;
-    break;
-  }
+if (!process.env.MYSQL_URL) {
+  throw new Error("MYSQL_URL env is required");
 }
 
-const sequelize = new Sequelize(dbURL);
+const sequelize = new Sequelize(process.env.MYSQL_URL);
 
 class Subscribeship extends Model<
   InferAttributes<Subscribeship>,
@@ -71,10 +50,6 @@ Subscribeship.init(
   {
     hooks: {
       afterCreate: async (subscribeship, options) => {
-        const subscriber = await User.findByPk(subscribeship.subscriberId);
-        if (subscriber === null) {
-          return;
-        }
         // date milliseconds will be round down in sql by default
         subscribeship.createdAt.setMilliseconds(0);
         const content: SubscribeshipCreatedContent = {
@@ -82,8 +57,6 @@ Subscribeship.init(
           subscribingId: subscribeship.subscribingId,
           // sql don't save precise milliseconds
           createdAt: subscribeship.createdAt.toISOString(),
-          name: subscriber.name,
-          avatar: subscriber.avatar,
         };
         await new SubscribeshipCreatedPublisher(connection).publish(content);
       },

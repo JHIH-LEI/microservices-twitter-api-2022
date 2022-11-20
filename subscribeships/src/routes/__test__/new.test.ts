@@ -45,8 +45,6 @@ it("start subscribe", async () => {
   const content: SubscribeshipCreatedContent = {
     subscriberId: subscribeshipInDB!.subscriberId,
     subscribingId: subscribeshipInDB!.subscribingId,
-    name: "loginUser",
-    avatar: "loginUser",
     createdAt: subscribeshipInDB!.createdAt.toISOString(),
   };
 
