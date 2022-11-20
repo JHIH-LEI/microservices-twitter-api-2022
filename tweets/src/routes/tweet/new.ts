@@ -1,4 +1,8 @@
-import { ConflictError, DBError } from "@domosideproject/twitter-common";
+import {
+  ConflictError,
+  DBError,
+  TweetCreatedContent,
+} from "@domosideproject/twitter-common";
 import { NextFunction, Request, Response } from "express";
 import { Tweet } from "../../models/tweet";
 import { User } from "../../models/user";
@@ -28,16 +32,16 @@ export const newTweet = async (
       throw new DBError(JSON.stringify(err));
     });
 
-    await new TweetCreatedPublisher(connection).publish({
-      id: tweet.id,
+    const publishContent: TweetCreatedContent = {
+      id: tweet.id.toString(),
       description: tweet.description,
       userId: tweet.userId.toString(),
-      name: creator.name,
-      avatar: creator.avatar,
       version: tweet.version,
       createdAt: tweet.createdAt.toISOString(),
       updatedAt: tweet.updatedAt.toISOString(),
-    });
+    };
+
+    await new TweetCreatedPublisher(connection).publish(publishContent);
 
     res.status(201).send(tweet._id);
   } catch (err) {

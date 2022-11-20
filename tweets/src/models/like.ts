@@ -89,7 +89,7 @@ likeSchema.pre("deleteMany", async function () {
 // prevent tweet have multiple like from same user
 likeSchema.index({ tweetId: 1, userId: 1 }, { unique: true });
 
-likeSchema.statics.build = (attrs: LikeAttrs) => {
+likeSchema.statics.build = (attrs: LikeAttrs): LikeDoc => {
   return new Like(attrs);
 };
 
