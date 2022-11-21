@@ -8,4 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - env:
+          MONGO_URL: mongodb://root:password@localhost:27017/tweets
+          JWT_KEY: test
+          RABBITMQ_URL: amqp://localhost:5672
       - run: cd tweets && npm install && npm run test:ci
