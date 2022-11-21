@@ -15,6 +15,19 @@ spec:
       containers:
         - name: followships-mysql
           image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: followships-configmap
+                  key: mysql_database
 ---
 apiVersion: v1
 kind: Service
