@@ -6,17 +6,17 @@
 
 [測試檔案紀錄](https://docs.google.com/spreadsheets/d/1b6o0sJsoG7D1afKGW2jFwDmLbTK6MJdR0QmhvV3AjcU/edit?usp=sharing)
 
+
+
 ### 專案前身
 
 重構之前的[Monolithic Simple Twitter API repo 可點此](https://github.com/JHIH-LEI/twitter-api-2020)，[live demo點此](https://tzynwang.github.io/simple-twitter-frontend/#/login)，
-
 
 Before：
 <img width="766" alt="截圖 2022-11-08 下午2 59 47" src="https://user-images.githubusercontent.com/66233452/200496169-1fed58d3-c095-4db7-b971-651301f7e99e.png">
 
 After：
 ![](https://i.imgur.com/QLcSoca.png)
-
 
 # 專案介紹：
 
@@ -36,6 +36,7 @@ After：
 
 而為了方便管理不同容器採用了kubenete，詳細的設定檔可至infra/k8s查看，未來會在實作CICD的流程。
 
+
 # 功能
 （使用者驗證的邏輯打包成npm package讓每個服務都能用）
 前台：
@@ -44,6 +45,7 @@ After：
 * 使用者能追蹤/訂閱（類似於FB的通知）其他使用者
 * 使用者能編輯個人資料（上傳背景及大頭照尚未實踐，未來希望是在優化方面能夠上傳到專門存放檔案的雲端服務，原本是仰賴開源服務，可見舊專案）
 * 通知系統
+
 
 ![](https://i.imgur.com/AgOEaCq.png)
 
@@ -56,13 +58,16 @@ Notify Server：
 ![](https://i.imgur.com/OaLb6al.png)
 
 
+
 後台：(未實踐，前一個版本有做)
 
 * 管理員能刪除推文
 * 管理員能看見所有推文
 * 管理員能看見所有使用者數據
 
+
 # 專案設定 (未來將利用kubenete的服務會更簡單)
+
 
 請先根據.env.example設定對應的值，每一個server都會有自己的.env檔，主要用來連線資料庫使用。
 
@@ -134,6 +139,7 @@ npm run dev
 Example app listening on port 3000!
 ```
 
+
 ### 使用skaffold dev 一次測試整個app (目前還沒建置完，未來再補上)
 
 首先，進入每一個server去建立docker image + push到docker hub，第一次run skaffold之前一定要先建不然抓不到image，之後可以不用，讓skaffold自動幫我們更新。
@@ -154,6 +160,7 @@ skaffold dev
 ```
 
 在終端機有看到每個伺服器都成功監聽3000 port並沒有錯誤訊息就沒問題囉。
+
 
 
 ### 測試
