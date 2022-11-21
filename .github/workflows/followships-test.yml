@@ -8,4 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - env:
+          MONGO_URL: mongodb://users-mongo-srv:27017/followships
+          RABBITMQ_URL: amqp://localhost:5672
+          JWT_KEY: test
       - run: cd followships && npm install && npm run test:ci
