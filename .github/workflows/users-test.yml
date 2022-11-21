@@ -23,4 +23,4 @@ jobs:
           npm install
           npm run test:ci
          env:
-           RABBITMQ_URL: ${{ jobs.services.rabbitmq.ports['5672'] }}
+           RABBITMQ_URL: ${{ job.services.rabbitmq.ports['5672'] }}
