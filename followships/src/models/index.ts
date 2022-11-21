@@ -1,7 +1,6 @@
 import {
   FollowshipCreatedContent,
   FollowshipDeletedContent,
-  getDBUrlBaseNodeEnv,
 } from "@domosideproject/twitter-common";
 import {
   CreationOptional,
@@ -18,12 +17,11 @@ import { connection } from "../app";
 import { FollowshipCreatedPublisher } from "../publishers/followship-created";
 import { FollowshipDeletedPublisher } from "../publishers/followship-deleted";
 
-const dbURL = getDBUrlBaseNodeEnv();
-if (!dbURL) {
-  throw new Error("missing dbURL env variable");
+if (!process.env.MYSQL_URL) {
+  throw new Error("missing MYSQL_URL env variable");
 }
 
-const sequelize = new Sequelize(dbURL);
+const sequelize = new Sequelize(process.env.MYSQL_URL);
 
 class Followship extends Model<
   InferAttributes<Followship>,
