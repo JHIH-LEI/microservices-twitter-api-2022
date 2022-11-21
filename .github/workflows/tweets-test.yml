@@ -4,11 +4,11 @@ on:
   pull_request
 
 jobs:
-  label_issue:
+  tweets_test:
     runs-on: ubuntu-latest
+    env:
+      MONGO_URL: mongodb://root:password@localhost:27017/tweets
+      JWT_KEY: test
+      RABBITMQ_URL: amqp://localhost:5672
     steps:
-      - env:
-          MONGO_URL: mongodb://root:password@localhost:27017/tweets
-          JWT_KEY: test
-          RABBITMQ_URL: amqp://localhost:5672
-        run: cd users && npm install && npm run test:ci
+      - run: cd users && npm install && npm run test:ci
