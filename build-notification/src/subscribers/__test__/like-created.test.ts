@@ -25,8 +25,6 @@ it("notify tweet owner", async () => {
     tweetId,
     userId,
     id,
-    name,
-    avatar,
     createdAt,
   };
 
@@ -40,11 +38,7 @@ it("notify tweet owner", async () => {
   // 通知內文是否正確
   const expectNotificationContent: NotificationCreatedContent = {
     id: tweetId,
-    user: {
-      id: userId,
-      name,
-      avatar,
-    },
+    userId,
     type: NotificationType.Like,
     main: "",
     createdAt,

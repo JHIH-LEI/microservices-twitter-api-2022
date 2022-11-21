@@ -18,7 +18,7 @@ export class TweetCreatedConsumer extends Listener<TweetCreatedEvent> {
     content: TweetCreatedEvent["content"],
     message: Message
   ) {
-    const { userId, id, name, avatar, description, createdAt } = content;
+    const { userId, id, description, createdAt } = content;
 
     const [subscribers] = await Promise.all([
       RedisOperator.getSubscribers(userId),
@@ -28,11 +28,7 @@ export class TweetCreatedConsumer extends Listener<TweetCreatedEvent> {
     console.log(subscribers);
     const notification: NotificationCreatedContent = {
       id,
-      user: {
-        id: userId,
-        name,
-        avatar,
-      },
+      userId,
       type: NotificationType.Tweet,
       createdAt,
       main: description,

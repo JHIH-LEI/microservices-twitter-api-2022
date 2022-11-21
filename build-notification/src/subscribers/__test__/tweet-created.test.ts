@@ -44,8 +44,6 @@ it("notify tweet owner his subscribers that he have new tweet by publish notific
     createdAt,
     updatedAt,
     userId: tweetOwnerId,
-    name: tweetOwnerName,
-    avatar: tweetOwnerAvatar,
     version: 0,
   };
 
@@ -65,11 +63,7 @@ it("notify tweet owner his subscribers that he have new tweet by publish notific
     id: tweetId,
     type: NotificationType.Tweet,
     main: description,
-    user: {
-      id: tweetOwnerId,
-      name: tweetOwnerName,
-      avatar: tweetOwnerAvatar,
-    },
+    userId: tweetOwnerId,
     createdAt,
   };
 

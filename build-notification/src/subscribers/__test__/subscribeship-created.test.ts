@@ -20,8 +20,6 @@ it("add subscriber user id in redis database ref by user:<subscribingId> and bui
   const subscribeshipCreatedContent: SubscribeshipCreatedContent = {
     subscriberId,
     subscribingId,
-    name: subscriberName,
-    avatar: subscriberAvatar,
     createdAt,
   };
 
@@ -52,11 +50,7 @@ it("add subscriber user id in redis database ref by user:<subscribingId> and bui
   const expectNotificationContent: NotificationCreatedContent = {
     id: subscriberId,
     type: NotificationType.Subscribe,
-    user: {
-      id: subscriberId,
-      name: subscriberName,
-      avatar: subscriberAvatar,
-    },
+    userId: subscriberId,
     createdAt,
     main: "",
     notifyUserIds: [subscribingId],

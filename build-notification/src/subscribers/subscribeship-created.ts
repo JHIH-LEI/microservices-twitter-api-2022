@@ -18,7 +18,7 @@ export class SubscribeshipCreatedConsumer extends Listener<SubscribeshipCreatedE
     content: SubscribeshipCreatedEvent["content"],
     message: Message
   ) {
-    const { createdAt, avatar, subscriberId, subscribingId, name } = content;
+    const { createdAt, subscriberId, subscribingId } = content;
 
     await RedisOperator.addSubscribers({ subscriberId, subscribingId });
 
@@ -27,11 +27,7 @@ export class SubscribeshipCreatedConsumer extends Listener<SubscribeshipCreatedE
       id: subscriberId,
       type: NotificationType.Subscribe,
       main: "",
-      user: {
-        name,
-        avatar,
-        id: subscriberId,
-      },
+      userId: subscriberId,
       notifyUserIds: [subscribingId],
     };
 

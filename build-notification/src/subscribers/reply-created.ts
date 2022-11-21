@@ -18,7 +18,7 @@ export class ReplyCreatedConsumer extends Listener<ReplyCreatedEvent> {
     content: ReplyCreatedEvent["content"],
     message: Message
   ) {
-    const { createdAt, userId, avatar, tweetId, comment } = content;
+    const { createdAt, userId, tweetId, comment } = content;
 
     // 找到推文所有者是誰，去redis看
 
@@ -28,11 +28,7 @@ export class ReplyCreatedConsumer extends Listener<ReplyCreatedEvent> {
       id: tweetId,
       type: NotificationType.Reply,
       main: comment,
-      user: {
-        name: "",
-        avatar,
-        id: userId,
-      },
+      userId,
       notifyUserIds: notifyUserId ? [notifyUserId] : [],
     };
 
