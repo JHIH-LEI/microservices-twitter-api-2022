@@ -11,4 +11,5 @@ jobs:
       RABBITMQ_URL: amqp://localhost:5672
       JWT_KEY: test    
     steps:
+       - uses: actions/checkout@v2
        - run: cd users && npm install && npm run test:ci
