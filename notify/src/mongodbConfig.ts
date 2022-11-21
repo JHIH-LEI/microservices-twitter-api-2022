@@ -1,12 +1,10 @@
-import { getDBUrlBaseNodeEnv } from "@domosideproject/twitter-common";
 import mongoose from "mongoose";
 
 export const setupMongoose = async () => {
-  const MONGO_URI = getDBUrlBaseNodeEnv();
-  if (!MONGO_URI) {
-    throw new Error("missing db url env variable");
+  if (!process.env.MONGO_URL) {
+    throw new Error("missing MONGO_URL env variable");
   }
 
-  await mongoose.connect(MONGO_URI);
+  await mongoose.connect(process.env.MONGO_URL);
   console.log("connected to mongodb");
 };

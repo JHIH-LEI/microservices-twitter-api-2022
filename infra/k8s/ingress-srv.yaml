@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: micro-twitter.dev
+    - host: twitter.dev
       http:
         paths:
           - path: /api/users/?(.*)
@@ -36,5 +36,26 @@ spec:
             backend:
               service:
                 name: tweets-srv
+                port:
+                  number: 3000
+          - path: /api/likes/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tweets-srv
+                port:
+                  number: 3000
+          - path: /api/replies/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tweets-srv
+                port:
+                  number: 3000
+          - path: /api/notify/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: notify-srv
                 port:
                   number: 3000
