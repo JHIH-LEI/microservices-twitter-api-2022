@@ -8,17 +8,19 @@ on:
 jobs:
   users_tests:
     runs-on: ubuntu-latest
-    env:
-      RABBITMQ_URL: amqp://localhost:1883
+    
+    services:
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672
       
     steps:
        - uses: actions/checkout@v2
-       - name: run rabbitmq
-         uses: namoshek/rabbitmq-github-action@v1
-         with:
-          container-name: 'mqtt'
        - name: run test
          run: |
           cd users
           npm install
           npm run test:ci
+         env:
+           RABBITMQ_URL: ${{ jobs.services.rabbitmq.ports['5672'] }}
