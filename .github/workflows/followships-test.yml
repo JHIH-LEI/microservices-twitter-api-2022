@@ -4,13 +4,12 @@ on:
   pull_request
   
 jobs:
-  build:
+  followships_tests:
     runs-on: ubuntu-latest
+    env:
+      MYSQL_URL: mysql://root:password@localhost:3306/test-micro-twitter-followship
+      RABBITMQ_URL: amqp://localhost:5672
+      JWT_KEY: test
     steps:
       - uses: actions/checkout@v2
-      - env:
-          MYSQL_URL: mysql://root:password@localhost:3306/test-micro-twitter-followship
-          RABBITMQ_URL: amqp://localhost:5672
-          JWT_KEY: test
-      - run: mysql -e 'CREATE DATABASE IF NOT EXISTS test-micro-twitter-followship default character set utf8mb4 collate utf8mb4_unicode_ci;'
-      - run: cd followships && npm install && npm run test:ci
+      - run: mysql -e 'CREATE DATABASE IF NOT EXISTS test-micro-twitter-followship default character set utf8mb4 collate utf8mb4_unicode_ci;' && cd followships && npm install && npm run test:ci
