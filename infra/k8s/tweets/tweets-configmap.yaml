@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tweets-configmap
+data:
+  mongo_host: tweets-mongo-srv
+  rabbitmq_host: rabbitmq-srv

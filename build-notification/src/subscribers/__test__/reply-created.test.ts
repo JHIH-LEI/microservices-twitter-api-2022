@@ -30,7 +30,6 @@ it("notify tweet owner that have new reply by trigger user", async () => {
     createdAt,
     comment,
     userId,
-    avatar,
     version: 0,
   };
 
@@ -53,11 +52,7 @@ it("notify tweet owner that have new reply by trigger user", async () => {
   const expectNotificationContent: NotificationCreatedContent = {
     id: tweetId,
     type: NotificationType.Reply,
-    user: {
-      id: userId,
-      avatar,
-      name: "", // no need for user name
-    },
+    userId,
     createdAt,
     main: comment,
     notifyUserIds: [tweetOwnerId],

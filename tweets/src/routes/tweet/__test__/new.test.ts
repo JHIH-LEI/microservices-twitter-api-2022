@@ -53,8 +53,6 @@ it("return 201 by provide valid input and it have publish new tweet content to t
   const expectTweetCreatedContent: TweetCreatedContent = {
     id: newTweet!.id,
     userId: loginUser.id,
-    name: loginUser.name,
-    avatar: loginUser.avatar,
     createdAt: newTweet!.createdAt.toISOString(),
     version: newTweet!.version,
     updatedAt: newTweet!.updatedAt.toISOString(),

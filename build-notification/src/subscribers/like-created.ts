@@ -18,7 +18,7 @@ export class LikeCreatedConsumer extends Listener<LikeCreatedEvent> {
     content: LikeCreatedEvent["content"],
     message: Message
   ) {
-    const { createdAt, userId, name, avatar, tweetId } = content;
+    const { createdAt, userId, tweetId } = content;
 
     // 找到推文所有者是誰，去redis看
     const notifyUserId = await RedisOperator.getTweetOwnerId(tweetId);
@@ -27,11 +27,7 @@ export class LikeCreatedConsumer extends Listener<LikeCreatedEvent> {
       id: tweetId,
       type: NotificationType.Like,
       main: "",
-      user: {
-        name,
-        avatar,
-        id: userId,
-      },
+      userId,
       notifyUserIds: notifyUserId === null ? [] : [notifyUserId],
     };
 

@@ -53,8 +53,6 @@ it("start follow and publish to followship:created", async () => {
     followerId: follower.id,
     followingId: following.id,
     createdAt: followshipInDB!.createdAt.toISOString(),
-    name: followerName,
-    avatar: followerAvatar,
   };
   expect(mockPublish).toHaveBeenCalledWith(followshipCreatedContent);
 });

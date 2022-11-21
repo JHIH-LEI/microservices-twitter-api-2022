@@ -7,18 +7,11 @@ const start = async () => {
     throw new Error("missing JWT_KEY env variable");
   }
 
-  const MONGO_URI =
-    process.env.NODE_ENV === "test"
-      ? process.env.TEST_DB_URL
-      : process.env.NODE_ENV === "prod"
-      ? process.env.PROD_DB_URL
-      : process.env.DEV_DB_URL;
-
-  if (!MONGO_URI) {
-    throw new Error("missing db url env variable");
+  if (!process.env.MONGO_URL) {
+    throw new Error("missing MONGO_URL env variable");
   }
 
-  await mongoose.connect(MONGO_URI);
+  await mongoose.connect(process.env.MONGO_URL);
   console.log("connected to mongodb");
 
   app.listen(3000, () => {

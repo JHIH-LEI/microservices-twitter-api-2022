@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: micro-twitter-users
+          image: a71816/micro-twitter-users
+          ports:
+            - containerPort: 3000
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: jwt-key
+            - name: RABBITMQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-configmap
+                  key: rabbitmq_host
+            - name: RABBITMQ_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: rabbitmq-root-username
+            - name: RABBITMQ_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: rabbitmq-root-password
+            - name: RABBITMQ_URL
+              value: "amqp://$(RABBITMQ_ROOT_USERNAME):$(RABBITMQ_ROOT_PASSWORD)@$(RABBITMQ_HOST)"
+            - name: MONGO_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: mongo-root-username
+            - name: MONGO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: mongo-root-password
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-configmap
+                  key: mongo_host
+            - name: MONGO_URL
+              value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_HOST)"
+      # volumes:
+      #   - name: users-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-srv
+spec:
+  selector:
+    app: users
+  ports:
+    - name: users
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

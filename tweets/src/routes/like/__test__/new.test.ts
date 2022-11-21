@@ -54,8 +54,6 @@ it("return 201 successful like tweet and send like content to like:created queue
     id: newLikeRecord!.id.toString(),
     userId: likeOwnerId.toString(),
     tweetId: tweet.id,
-    name: likeOwnerName,
-    avatar: likeOwnerAvatar,
     createdAt: newLikeRecord!.createdAt.toISOString(),
   };
 

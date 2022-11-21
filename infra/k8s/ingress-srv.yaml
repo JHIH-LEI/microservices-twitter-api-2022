@@ -31,3 +31,10 @@ spec:
                 name: subscribeships-srv
                 port:
                   number: 3000
+          - path: /api/tweets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tweets-srv
+                port:
+                  number: 3000

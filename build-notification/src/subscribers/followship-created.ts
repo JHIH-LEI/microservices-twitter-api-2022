@@ -17,15 +17,12 @@ export class FollowshipCreatedConsumer extends Listener<FollowshipCreatedEvent> 
     content: FollowshipCreatedEvent["content"],
     message: Message
   ) {
-    const { followerId, followingId, name, avatar, createdAt } = content;
+    const { followerId, followingId, createdAt } = content;
+
     // 轉成notification要的資料，發事件
     const notification: NotificationCreatedContent = {
       id: followerId,
-      user: {
-        id: followerId,
-        name,
-        avatar,
-      },
+      userId: followerId,
       createdAt,
       main: "",
       type: NotificationType.Follow,

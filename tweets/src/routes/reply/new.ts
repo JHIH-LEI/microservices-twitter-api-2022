@@ -21,10 +21,7 @@ export const newReply = async (
 
     const reply = Reply.build({ tweetId, userId, comment });
 
-    const [user] = await Promise.all([
-      User.findById(userId),
-      reply.save(),
-    ]).catch((err) => {
+    await reply.save().catch((err) => {
       console.error(err);
       throw new DBError(JSON.stringify(err));
     });
@@ -37,7 +34,6 @@ export const newReply = async (
       version: reply.version,
       tweetId: reply.tweetId.toHexString(),
       userId,
-      avatar: user!.avatar,
     };
 
     await new ReplyCreatedPublisher(connection).publish(content);

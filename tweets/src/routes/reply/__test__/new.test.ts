@@ -46,7 +46,6 @@ it("return 201 successful reply tweet and publish to reply:created", async () =>
   expect(mockPublish).toHaveBeenCalledTimes(1);
   const expectContent: ReplyCreatedContent = {
     id: newReplyRecord!.id,
-    avatar,
     userId: loginUserId.toHexString(),
     version: newReplyRecord!.version,
     comment: newReplyRecord!.comment,

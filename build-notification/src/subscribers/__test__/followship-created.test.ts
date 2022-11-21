@@ -18,8 +18,6 @@ it("build notification and call publish (notificationCreated)", async () => {
     {
       followerId,
       followingId,
-      name: "user1",
-      avatar: "",
       createdAt,
     },
     message
@@ -44,11 +42,7 @@ it("build notification and call publish (notificationCreated)", async () => {
     type: NotificationType.Follow,
     main: "",
     createdAt,
-    user: {
-      id: followerId,
-      name: "user1",
-      avatar: "",
-    },
+    userId: followerId,
     notifyUserIds: [followingId],
   };
 

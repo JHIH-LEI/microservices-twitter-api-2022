@@ -2,6 +2,7 @@ import {
   DBError,
   NotFoundError,
   ConflictError,
+  LikeCreatedContent,
 } from "@domosideproject/twitter-common";
 import express, { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
@@ -45,14 +46,14 @@ export const newLike = async (
       );
     }
 
-    await new LikeCreatedPublishers(connection).publish({
-      id: newLike!.id,
+    const likeCreatedContent: LikeCreatedContent = {
+      id: newLike!.id.toString(),
       tweetId: newLike!.tweetId.toString(),
       createdAt: newLike!.createdAt.toISOString(),
       userId: likedUserId!,
-      name: user!.name,
-      avatar: user!.avatar,
-    });
+    };
+
+    await new LikeCreatedPublishers(connection).publish(likeCreatedContent);
 
     res.status(201).send("ok");
   } catch (err) {
