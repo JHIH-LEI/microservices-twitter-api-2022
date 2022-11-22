@@ -43,7 +43,7 @@ router.get(
             "avatar",
             [
               db.sequelize.literal(
-                `EXISTS (SELECT 1 FROM Followships WHERE followerId = ${targetUser} AND followingId = Followings.id)`
+                `EXISTS (SELECT 1 FROM ${db.Followship.tableName} WHERE followerId = ${targetUser} AND followingId = Followings.id)`
               ),
               "isFollowings",
             ],
