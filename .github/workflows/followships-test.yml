@@ -37,6 +37,6 @@ jobs:
           npm install
           npm run test:ci
         env:
-          MYSQL_URL: "mysql://root:${{ job.services.mysql.env.MYSQL_ROOT_PASSWORD }}@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/${{ job.services.mysql.env.MYSQL_DATABASE }}"
+          MYSQL_URL: "mysql://root:password@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/test-micro-twitter-followship"
           RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
           
