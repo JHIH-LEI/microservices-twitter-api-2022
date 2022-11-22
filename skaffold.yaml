@@ -32,3 +32,27 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: a71816/micro-twitter-tweets
+      context: tweets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: a71816/micro-twitter-build-notifications
+      context: build-notification
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/*.ts"
+            dest: .
+    - image: a71816/micro-twitter-notify
+      context: notify
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/*.ts"
+            dest: .
