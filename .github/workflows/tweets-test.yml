@@ -1,0 +1,27 @@
+name: tweets-test
+
+on:
+  pull_request:
+    paths:
+      - 'tweets/**'
+
+jobs:
+  tweets_test:
+    runs-on: ubuntu-latest
+    
+    services:
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: run test
+        run: |
+          cd users
+          npm install
+          npm run test:ci
+        env:
+          RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
+
