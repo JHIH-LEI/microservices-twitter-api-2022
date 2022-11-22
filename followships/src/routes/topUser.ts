@@ -40,7 +40,7 @@ router.get(
           "avatar",
           [
             db.sequelize.literal(
-              "(SELECT COUNT(DISTINCT id) FROM Followships WHERE followingId = User.id)"
+              `(SELECT COUNT(DISTINCT id) FROM ${db.Followship.tableName} WHERE followingId = User.id)`
             ),
             "totalFollowers",
           ],
