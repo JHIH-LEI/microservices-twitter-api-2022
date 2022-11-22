@@ -1,4 +1,5 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { connection, channel } from "../app";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
@@ -24,6 +25,13 @@ beforeEach(async () => {
 
   for (const collection of collections) {
     await collection.deleteMany({});
+  }
+});
+
+afterEach(async () => {
+  if (channel) {
+    await channel.close();
+    await connection.close();
   }
 });
 

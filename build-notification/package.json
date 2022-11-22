@@ -7,7 +7,7 @@
     "start": "ts-node-dev src/index.ts",
     "dev": "NODE_ENV=dev ts-node-dev src/index.ts",
     "test": "NODE_ENV=test jest --watchAll --no-cache --detectOpenHandles",
-    "test:ci": "jest"
+    "test:ci": "jest --forceExit"
   },
   "jest": {
     "preset": "ts-jest",
