@@ -24,3 +24,4 @@ jobs:
           npm run test:ci
         env:
           RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
+          JWT_KEY: test
