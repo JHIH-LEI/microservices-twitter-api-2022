@@ -19,19 +19,24 @@ jobs:
         image: mysql
         env:
           MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: test-micro-twitter-followship
         ports:
           - 3306
+        options: >-
+          --name=mysql
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
           
     steps:
       - uses: actions/checkout@v2
-      - name: create database
-        run: mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e 'CREATE DATABASE IF NOT EXISTS test-micro-twitter-followship default character set utf8mb4 collate utf8mb4_unicode_ci;'
       - name: run test
         run: |
           cd followships
           npm install
           npm run test:ci
         env:
-          MYSQL_URL: "mysql://root:password@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/test-micro-twitter-followship"
+          MYSQL_URL: "mysql://root:${{ job.services.mysql.env.MYSQL_ROOT_PASSWORD }}@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/${{ job.services.mysql.env.MYSQL_DATABASE }}"
           RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
-
+          
