@@ -23,8 +23,8 @@ beforeAll(async () => {
 beforeEach(async () => {
   // 刪除資料
   try {
-    await Followship.destroy({ where: {} });
-    await User.destroy({ where: {} });
+    await Followship.destroy({ where: {}, force: true });
+    await User.destroy({ where: {}, force: true });
   } catch (err) {
     console.log(err);
   }
@@ -33,8 +33,8 @@ beforeEach(async () => {
 afterEach(async () => {
   // 刪除資料
   try {
-    await Followship.destroy({ where: {} });
-    await User.destroy({ where: {} });
+    await Followship.destroy({ where: {}, force: true });
+    await User.destroy({ where: {}, force: true });
   } catch (err) {
     console.log(err);
   }
