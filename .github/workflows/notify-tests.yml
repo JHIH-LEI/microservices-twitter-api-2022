@@ -14,6 +14,10 @@ jobs:
         image: rabbitmq:latest
         ports:
           - 5672
+      redis:
+        image: redis
+        ports:
+          - 6379
           
     steps:
       - uses: actions/checkout@v2
@@ -25,3 +29,4 @@ jobs:
         env:
           RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
           JWT_KEY: test
+          REDIS_URL: "redis://127.0.0.1:${{ job.services.redis.ports['6379'] }}"
