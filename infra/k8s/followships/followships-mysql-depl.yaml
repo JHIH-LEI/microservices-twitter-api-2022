@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: followships-mysql-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: followships-mysql
+  template:
+    metadata:
+      labels:
+        app: followships-mysql
+    spec:
+      containers:
+        - name: followships-mysql
+          image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: followships-configmap
+                  key: mysql_database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: followships-mysql-srv
+spec:
+  selector:
+    app: followships-mysql
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3306
+      targetPort: 3306

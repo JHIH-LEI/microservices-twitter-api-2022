@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscribeships-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscribeships
+  template:
+    metadata:
+      labels:
+        app: subscribeships
+    spec:
+      containers:
+        - name: micro-twitter-subscribeships
+          image: a71816/micro-twitter-subscribeships
+          ports:
+            - containerPort: 3000
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: jwt-key
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: mysql-root-password
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: subscribeships-configmap
+                  key: mysql_host
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: subscribeships-configmap
+                  key: mysql_database
+            - name: MYSQL_URL
+              value: "mysql://root:$(MYSQL_ROOT_PASSWORD)@$(MYSQL_HOST)/$(MYSQL_DATABASE)"
+            - name: RABBITMQ_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: rabbitmq-root-username
+            - name: RABBITMQ_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: rabbitmq-root-password
+            - name: RABBITMQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: subscribeships-configmap
+                  key: rabbitmq_host
+            - name: RABBITMQ_URL
+              value: "amqp://$(RABBITMQ_ROOT_USERNAME):$(RABBITMQ_ROOT_PASSWORD)@$(RABBITMQ_HOST)"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subscribeships-srv
+spec:
+  selector:
+    app: subscribeships
+  ports:
+    - name: subscribeships
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

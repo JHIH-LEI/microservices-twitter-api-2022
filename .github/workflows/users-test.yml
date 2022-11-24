@@ -3,24 +3,24 @@ name: users-tests
 on:
   pull_request:
     paths:
-      - 'users/**'
+      - "users/**"
 
 jobs:
   users_tests:
     runs-on: ubuntu-latest
-    
+
     services:
       rabbitmq:
         image: rabbitmq:latest
         ports:
           - 5672
-      
+
     steps:
-       - uses: actions/checkout@v2
-       - name: run test
-         run: |
+      - uses: actions/checkout@v2
+      - name: run test
+        run: |
           cd users
           npm install
           npm run test:ci
-         env:
-           RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
+        env:
+          RABBITMQ_URL: "amqp://127.0.0.1:${{ job.services.rabbitmq.ports['5672'] }}"
