@@ -1,8 +1,10 @@
 import {
+  BindingKey,
+  getQueueName,
   Listener,
   NotificationCreatedContent,
   NotificationType,
-  Queue,
+  Service,
   TweetCreatedEvent,
 } from "@domosideproject/twitter-common";
 import { Message } from "amqplib/properties";
@@ -12,7 +14,9 @@ import { RedisOperator } from "../services/redis-operator";
 
 export class TweetCreatedConsumer extends Listener<TweetCreatedEvent> {
   readonly channel = listenerChannel;
-  readonly queue = Queue.TweetCreated;
+  readonly queue = getQueueName(Service.Tweet, this.bindingKey);
+  readonly bindingKey: BindingKey = BindingKey.TweetCreated;
+  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: TweetCreatedEvent["content"],

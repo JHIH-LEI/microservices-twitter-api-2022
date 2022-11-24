@@ -1,9 +1,11 @@
 import {
   FollowshipCreatedEvent,
   Listener,
-  Queue,
   NotificationCreatedContent,
   NotificationType,
+  getQueueName,
+  Service,
+  BindingKey,
 } from "@domosideproject/twitter-common";
 import { Channel, Message } from "amqplib";
 import { listenerChannel } from "../index";
@@ -11,7 +13,9 @@ import { NotificationCreatedPublisher } from "../publishers/notification-created
 
 export class FollowshipCreatedConsumer extends Listener<FollowshipCreatedEvent> {
   channel: Channel = listenerChannel;
-  readonly queue = Queue.FollowshipCreated;
+  readonly queue = getQueueName(Service.Followship, this.bindingKey);
+  readonly bindingKey: BindingKey = BindingKey.FollowshipCreated;
+  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: FollowshipCreatedEvent["content"],
