@@ -13,7 +13,6 @@ export class UserUpdatedConsumer extends Listener<UserUpdatedEvent> {
   readonly queue = getQueueName(Service.User, this.bindingKey);
   channel;
   readonly bindingKey: BindingKey = BindingKey.UserUpdated;
-  readonly durable: boolean = true;
 
   constructor(connection: Connection, channel: Channel) {
     super(connection);

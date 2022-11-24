@@ -14,7 +14,6 @@ export class UserCreatedConsumer extends Listener<UserCreatedEvent> {
   readonly queue = getQueueName(Service.User, this.bindingKey);
   channel;
   readonly bindingKey: BindingKey = BindingKey.UserCreated;
-  readonly durable: boolean = true;
 
   constructor(connection: Connection, channel: Channel) {
     super(connection);

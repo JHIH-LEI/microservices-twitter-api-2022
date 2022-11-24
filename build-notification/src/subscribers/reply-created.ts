@@ -16,7 +16,6 @@ export class ReplyCreatedConsumer extends Listener<ReplyCreatedEvent> {
   readonly channel = listenerChannel;
   readonly queue = getQueueName(Service.Tweet, this.bindingKey);
   readonly bindingKey: BindingKey = BindingKey.ReplyCreated;
-  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: ReplyCreatedEvent["content"],

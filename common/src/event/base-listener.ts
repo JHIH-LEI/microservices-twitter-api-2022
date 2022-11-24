@@ -1,8 +1,5 @@
 import { Event } from "./base-event";
-import amqp, { Message } from "amqplib";
-import { getQueueName, Service } from "./queue";
-import { UserCreatedEvent } from "./user-created-event";
-import { BindingKey } from "./bindingKey";
+import amqp from "amqplib";
 
 export abstract class Listener<E extends Event> {
   abstract queue: string;
@@ -10,7 +7,6 @@ export abstract class Listener<E extends Event> {
   private exchangeName = "twitter";
   private exchangeType = "direct";
   abstract bindingKey: E["bindingKey"];
-  abstract durable: boolean;
 
   abstract channel: amqp.Channel;
   abstract consumeCallBack(
@@ -36,7 +32,7 @@ export abstract class Listener<E extends Event> {
     const outerThis = this;
 
     this.channel.assertExchange(this.exchangeName, this.exchangeType, {
-      durable: this.durable,
+      durable: true,
     });
     this.channel.assertQueue(this.queue);
     this.channel.bindQueue(this.queue, this.exchangeName, this.bindingKey);

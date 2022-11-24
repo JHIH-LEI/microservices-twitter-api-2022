@@ -16,7 +16,6 @@ export class SubscribeshipCreatedConsumer extends Listener<SubscribeshipCreatedE
   readonly channel = listenerChannel;
   readonly queue = getQueueName(Service.Subscribeship, this.bindingKey);
   readonly bindingKey: BindingKey = BindingKey.SubscribeshipCreated;
-  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: SubscribeshipCreatedEvent["content"],

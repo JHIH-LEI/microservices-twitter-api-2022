@@ -12,7 +12,6 @@ import { db } from "../models";
 export class UserUpdatedConsumer extends Listener<UserUpdatedEvent> {
   readonly queue = getQueueName(Service.User, this.bindingKey);
   readonly channel = listenerChannel;
-  readonly durable: boolean = true;
   readonly bindingKey: BindingKey = BindingKey.UserUpdated;
 
   async consumeCallBack(

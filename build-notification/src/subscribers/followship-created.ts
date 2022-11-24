@@ -15,7 +15,6 @@ export class FollowshipCreatedConsumer extends Listener<FollowshipCreatedEvent> 
   channel: Channel = listenerChannel;
   readonly queue = getQueueName(Service.Followship, this.bindingKey);
   readonly bindingKey: BindingKey = BindingKey.FollowshipCreated;
-  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: FollowshipCreatedEvent["content"],

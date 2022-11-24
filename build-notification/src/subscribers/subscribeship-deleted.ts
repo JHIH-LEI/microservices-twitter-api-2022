@@ -13,7 +13,6 @@ export class SubscribeshipDeletedConsumer extends Listener<SubscribeshipDeletedE
   readonly channel = listenerChannel;
   readonly queue = getQueueName(Service.Subscribeship, this.bindingKey);
   readonly bindingKey: BindingKey = BindingKey.SubscribeshipDeleted;
-  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: SubscribeshipDeletedEvent["content"],

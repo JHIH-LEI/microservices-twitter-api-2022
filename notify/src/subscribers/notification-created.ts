@@ -20,7 +20,6 @@ export class NotificationCreatedConsumer extends Listener<NotificationCreatedEve
   readonly queue = getQueueName(Service.Notify, this.bindingKey);
   channel;
   readonly bindingKey: BindingKey = BindingKey.NotificationCreated;
-  durable: boolean = false; // 丟失的通知就算了
 
   constructor(connection: Connection, channel: Channel) {
     super(connection);

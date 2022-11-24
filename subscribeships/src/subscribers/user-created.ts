@@ -13,7 +13,6 @@ export class UserCreatedConsumer extends Listener<UserCreatedEvent> {
   readonly queue = getQueueName(Service.User, this.bindingKey);
   readonly channel = listenerChannel;
   readonly bindingKey: BindingKey = BindingKey.UserCreated;
-  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: UserCreatedEvent["content"],

@@ -16,7 +16,6 @@ export class LikeCreatedConsumer extends Listener<LikeCreatedEvent> {
   readonly channel = listenerChannel;
   readonly queue = getQueueName(Service.Tweet, this.bindingKey);
   readonly bindingKey: BindingKey = BindingKey.LikeCreated;
-  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: LikeCreatedEvent["content"],
