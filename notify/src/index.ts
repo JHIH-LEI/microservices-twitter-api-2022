@@ -19,6 +19,7 @@ import { setupMongoose } from "./mongodbConfig";
 import { NotificationCreatedConsumer } from "./subscribers/notification-created";
 import { emitNotificationCounts } from "./events/emit/notificationCounts";
 import { onIsReadCallBack } from "./events/on/isRead";
+import { UserCreatedConsumer } from "./subscribers/user-created";
 
 if (!process.env.JWT_KEY) {
   throw new Error("missing JWT_KEY env variable");
@@ -45,11 +46,12 @@ const setupRabbitMQ = async () => {
   const connection = await amqp.connect(process.env.RABBITMQ_URL!);
   const listenerChannel = await connection.createChannel();
 
-  new NotificationCreatedConsumer(connection, listenerChannel)
-    .consumeFromQueue()
-    .catch((err) => {
-      console.error(err);
-    });
+  new NotificationCreatedConsumer(
+    connection,
+    listenerChannel
+  ).consumeFromQueue();
+
+  new UserCreatedConsumer(connection, listenerChannel).consumeFromQueue();
 };
 
 setupRabbitMQ();
