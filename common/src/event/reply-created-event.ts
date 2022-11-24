@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 /**
  * id is mongodb id
@@ -14,6 +14,7 @@ export interface ReplyCreatedContent {
 }
 
 export interface ReplyCreatedEvent {
-  queue: Queue.ReplyCreated;
+  queue: string;
   content: ReplyCreatedContent;
+  bindingKey: BindingKey;
 }

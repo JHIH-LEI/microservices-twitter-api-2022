@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 export interface SubscribeshipCreatedContent {
   subscriberId: string;
@@ -7,6 +7,7 @@ export interface SubscribeshipCreatedContent {
 }
 
 export interface SubscribeshipCreatedEvent {
-  queue: Queue.SubscribeshipCreated;
+  queue: string;
   content: SubscribeshipCreatedContent;
+  bindingKey: BindingKey;
 }

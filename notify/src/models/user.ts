@@ -16,6 +16,10 @@ interface UserDoc extends mongoose.Document {
 
 interface UserModel extends mongoose.Model<UserDoc> {
   build(attrs: UserAttrs): UserDoc;
+  findByVersionOrder(event: {
+    id: string;
+    version: number;
+  }): Promise<UserDoc | null>;
 }
 
 const userSchema = new mongoose.Schema({
@@ -34,6 +38,13 @@ userSchema.plugin(updateIfCurrentPlugin);
 
 userSchema.statics.build = (attrs: UserAttrs) => {
   return new User(attrs);
+};
+
+userSchema.statics.findByVersionOrder = (event: {
+  id: string;
+  version: number;
+}) => {
+  return User.findOne({ _id: event.id, version: event.version - 1 });
 };
 
 export const User = mongoose.model<UserDoc, UserModel>("User", userSchema);

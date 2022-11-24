@@ -1,11 +1,11 @@
 import {
+  BindingKey,
   FollowshipDeletedEvent,
   Publisher,
-  Queue,
 } from "@domosideproject/twitter-common";
 import { senderChannel } from "../app";
 
 export class FollowshipDeletedPublisher extends Publisher<FollowshipDeletedEvent> {
-  readonly queue = Queue.FollowshipDeleted;
   readonly channel = senderChannel;
+  readonly routingKey: BindingKey = BindingKey.FollowshipDeleted;
 }

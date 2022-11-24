@@ -1,7 +1,9 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 import { NotificationCreatedContent } from "./types/notification";
 
+// build-notification
 export interface NotificationCreatedEvent {
-  queue: Queue.NotificationCreated;
+  queue: string;
   content: NotificationCreatedContent;
+  bindingKey: BindingKey;
 }

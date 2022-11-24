@@ -6,20 +6,24 @@ import {
   BindingKey,
   getQueueName,
 } from "@domosideproject/twitter-common";
-import { Message } from "amqplib";
-import { listenerChannel } from "../app";
+import { Channel, Connection, Message } from "amqplib";
 import { User } from "../models/user";
 
 export class UserUpdatedConsumer extends Listener<UserUpdatedEvent> {
   readonly queue = getQueueName(Service.User, this.bindingKey);
-  readonly channel = listenerChannel;
+  channel;
   readonly bindingKey: BindingKey = BindingKey.UserUpdated;
+
+  constructor(connection: Connection, channel: Channel) {
+    super(connection);
+    this.channel = channel;
+  }
 
   async consumeCallBack(
     content: UserUpdatedEvent["content"],
     message: Message
   ) {
-    const { id, version, name, account, avatar, updatedAt } = content;
+    const { id, version, name, avatar } = content;
 
     const canUpdatedUser = await User.findByVersionOrder({ id, version }).catch(
       (err: any) => {
@@ -32,9 +36,7 @@ export class UserUpdatedConsumer extends Listener<UserUpdatedEvent> {
     }
 
     canUpdatedUser.name = name;
-    canUpdatedUser.account = account;
     canUpdatedUser.avatar = avatar;
-    canUpdatedUser.updatedAt = new Date(updatedAt);
 
     await canUpdatedUser.save().catch((err: any) => {
       throw new DBError(`update user error: ${JSON.stringify(err)}`);

@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 export interface FollowshipCreatedContent {
   followerId: string;
@@ -7,6 +7,7 @@ export interface FollowshipCreatedContent {
 }
 
 export interface FollowshipCreatedEvent {
-  queue: Queue.FollowshipCreated;
+  queue: string;
   content: FollowshipCreatedContent;
+  bindingKey: BindingKey;
 }

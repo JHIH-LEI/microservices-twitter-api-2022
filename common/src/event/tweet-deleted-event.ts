@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 export interface TweetDeletedContent {
   id: string;
@@ -6,6 +6,7 @@ export interface TweetDeletedContent {
 }
 
 export interface TweetDeletedEvent {
-  queue: Queue.TweetDeleted;
+  queue: string;
   content: TweetDeletedContent;
+  bindingKey: BindingKey;
 }
