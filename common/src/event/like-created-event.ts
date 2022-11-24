@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 export interface LikeCreatedContent {
   id: string;
@@ -8,6 +8,7 @@ export interface LikeCreatedContent {
 }
 
 export interface LikeCreatedEvent {
-  queue: Queue.LikeCreated;
+  queue: string;
   content: LikeCreatedContent;
+  bindingKey: BindingKey;
 }

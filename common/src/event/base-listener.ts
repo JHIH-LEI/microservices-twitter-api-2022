@@ -2,8 +2,12 @@ import { Event } from "./base-event";
 import amqp from "amqplib";
 
 export abstract class Listener<E extends Event> {
-  abstract queue: E["queue"];
+  abstract queue: string;
   protected connection: amqp.Connection;
+  private exchangeName = "twitter";
+  private exchangeType = "direct";
+  abstract bindingKey: E["bindingKey"];
+
   abstract channel: amqp.Channel;
   abstract consumeCallBack(
     parsedContent: E["content"],
@@ -24,23 +28,32 @@ export abstract class Listener<E extends Event> {
     return parsedContent;
   }
 
-  async consumeFromQueue() {
+  consumeFromQueue() {
     const outerThis = this;
-    this.channel.assertQueue(this.queue);
-    this.channel.consume(this.queue, async function (message) {
-      if (message === null) {
-        console.log("consumer cancelled by server");
-      } else {
-        const parsedContent = outerThis.parseContent(message.content);
-        await outerThis.consumeCallBack(parsedContent, message);
-        outerThis.channel.ack(message);
-      }
+
+    this.channel.assertExchange(this.exchangeName, this.exchangeType, {
+      durable: true,
     });
+    this.channel.assertQueue(this.queue);
+    this.channel.bindQueue(this.queue, this.exchangeName, this.bindingKey);
+
+    this.channel.consume(
+      this.queue,
+      async function (message) {
+        if (message === null) {
+          console.log("consumer cancelled by server");
+        } else {
+          const parsedContent = outerThis.parseContent(message.content);
+          await outerThis
+            .consumeCallBack(parsedContent, message)
+            .catch((err) => {
+              console.error(err);
+              return;
+            });
+          outerThis.channel.ack(message);
+        }
+      },
+      { noAck: false }
+    );
   }
 }
-
-// 最後希望這樣用
-// new xxxListener(connection,channel).consumeFromQueue(data=> {
-//   我自己的操作邏輯
-// }
-//})

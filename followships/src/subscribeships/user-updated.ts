@@ -1,6 +1,8 @@
 import {
+  BindingKey,
+  getQueueName,
   Listener,
-  Queue,
+  Service,
   UserUpdatedEvent,
 } from "@domosideproject/twitter-common";
 import { Message } from "amqplib";
@@ -8,8 +10,9 @@ import { listenerChannel } from "../app";
 import { db } from "../models";
 
 export class UserUpdatedConsumer extends Listener<UserUpdatedEvent> {
-  readonly queue = Queue.UserUpdated;
+  readonly queue = getQueueName(Service.User, this.bindingKey);
   readonly channel = listenerChannel;
+  readonly bindingKey: BindingKey = BindingKey.UserUpdated;
 
   async consumeCallBack(
     content: UserUpdatedEvent["content"],

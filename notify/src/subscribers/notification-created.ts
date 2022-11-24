@@ -1,10 +1,12 @@
 import {
+  BindingKey,
   ConflictError,
   DBError,
+  getQueueName,
   Listener,
   NotificationCreatedContent,
   NotificationCreatedEvent,
-  Queue,
+  Service,
 } from "@domosideproject/twitter-common";
 import { Channel, Message, Connection } from "amqplib";
 import mongoose from "mongoose";
@@ -15,8 +17,9 @@ import { RedisOperator } from "../services/redis-operator";
 import { NotifyPopupContent } from "../types";
 
 export class NotificationCreatedConsumer extends Listener<NotificationCreatedEvent> {
-  readonly queue = Queue.NotificationCreated;
+  readonly queue = getQueueName(Service.Notify, this.bindingKey);
   channel;
+  readonly bindingKey: BindingKey = BindingKey.NotificationCreated;
 
   constructor(connection: Connection, channel: Channel) {
     super(connection);

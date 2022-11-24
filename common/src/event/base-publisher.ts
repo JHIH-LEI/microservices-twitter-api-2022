@@ -3,9 +3,11 @@ import amqp from "amqplib";
 import isObject from "lodash.isobject";
 
 export abstract class Publisher<E extends Event> {
-  abstract queue: E["queue"];
   protected connection: amqp.Connection;
   abstract channel: amqp.Channel;
+  private exchangeName = "twitter";
+  private exchangeType = "direct";
+  abstract routingKey: E["bindingKey"];
 
   constructor(connection: amqp.Connection) {
     this.connection = connection;
@@ -22,9 +24,14 @@ export abstract class Publisher<E extends Event> {
   }
 
   async publish(content: E["content"], options?: amqp.Options.Publish) {
-    await this.channel.assertQueue(this.queue);
+    await this.channel.assertExchange(this.exchangeName, this.exchangeType, {
+      durable: true,
+    });
     const bufferContent = this.parseContent(content);
-    this.channel.sendToQueue(this.queue, bufferContent, options);
+    this.channel.publish(this.exchangeName, this.routingKey, bufferContent, {
+      ...options,
+      persistent: true,
+    });
   }
 }
 
