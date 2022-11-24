@@ -1,8 +1,10 @@
 import {
   UserCreatedEvent,
   Listener,
-  Queue,
+  Service,
   DBError,
+  getQueueName,
+  BindingKey,
 } from "@domosideproject/twitter-common";
 import { Message } from "amqplib";
 import mongoose from "mongoose";
@@ -10,8 +12,10 @@ import { listenerChannel } from "../app";
 import { User } from "../models/user";
 
 export class UserCreatedConsumer extends Listener<UserCreatedEvent> {
-  readonly queue = Queue.UserCreated;
+  readonly queue = getQueueName(Service.User, this.bindingKey);
   readonly channel = listenerChannel;
+  readonly bindingKey: BindingKey = BindingKey.UserCreated;
+  readonly durable: boolean = true;
 
   async consumeCallBack(
     content: UserCreatedEvent["content"],

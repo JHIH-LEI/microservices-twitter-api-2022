@@ -1,11 +1,15 @@
 import {
+  BindingKey,
+  getQueueName,
   Publisher,
-  Queue,
+  Service,
   TweetUpdatedEvent,
 } from "@domosideproject/twitter-common";
 import { senderChannel } from "../app";
 
 export class TweetUpdatedPublisher extends Publisher<TweetUpdatedEvent> {
-  readonly queue = Queue.TweetUpdated;
+  readonly queue = getQueueName(Service.Tweet, this.routingKey);
   readonly channel = senderChannel;
+  readonly durable: boolean = true;
+  readonly routingKey: BindingKey = BindingKey.TweetUpdated;
 }
