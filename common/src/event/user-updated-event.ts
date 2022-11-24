@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 export interface UserUpdatedContent {
   id: string;
@@ -10,6 +10,7 @@ export interface UserUpdatedContent {
 }
 
 export interface UserUpdatedEvent {
-  queue: Queue.UserUpdated;
+  queue: string;
   content: UserUpdatedContent;
+  bindingKey: BindingKey;
 }

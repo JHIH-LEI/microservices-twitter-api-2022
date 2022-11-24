@@ -1,22 +1,20 @@
-export enum Queue {
-  NotificationCreated = "notification:created",
+import { BindingKey } from "./bindingKey";
 
-  FollowshipCreated = "followship:created",
-  FollowshipDeleted = "followship:deleted",
+export enum Service {
+  User = "users",
+  Tweet = "tweets",
+  Notify = "notify",
+  BuildNotification = "build-notifications",
+  Subscribeship = "subscribeships",
+  Followship = "followships",
+}
 
-  LikeCreated = "like:created",
-  LikeDeleted = "like:deleted",
-
-  ReplyCreated = "reply:created",
-  ReplyDeleted = "reply:deleted",
-
-  TweetCreated = "tweet:created",
-  TweetUpdated = "tweet:updated",
-  TweetDeleted = "tweet:deleted",
-
-  UserCreated = "user:created",
-  UserUpdated = "user:updated",
-
-  SubscribeshipCreated = "subscribeship:created",
-  SubscribeshipDeleted = "subscribeship:deleted",
+/**
+ *
+ * @param service
+ * @param bindingKey
+ * @returns queue name. 格式：訂閱的服務＋訂閱的bindingkey
+ */
+export function getQueueName(service: Service, bindingKey: BindingKey) {
+  return `${service}_${bindingKey}`;
 }

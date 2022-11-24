@@ -1,4 +1,4 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 /**
  * id is mongodb id
@@ -8,6 +8,7 @@ export interface LikeDeletedContent {
 }
 
 export interface LikeDeletedEvent {
-  queue: Queue.LikeDeleted;
+  queue: string;
   content: LikeDeletedContent;
+  bindingKey: BindingKey;
 }

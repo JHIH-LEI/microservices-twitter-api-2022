@@ -1,6 +1,7 @@
-import { Queue } from "./queue";
+import { BindingKey } from "./bindingKey";
 
 export interface Event {
   content: any;
-  queue: Queue;
+  queue: string;
+  bindingKey: BindingKey;
 }

@@ -1,9 +1,17 @@
 import { Event } from "./base-event";
-import amqp from "amqplib";
+import amqp, { Message } from "amqplib";
+import { getQueueName, Service } from "./queue";
+import { UserCreatedEvent } from "./user-created-event";
+import { BindingKey } from "./bindingKey";
 
 export abstract class Listener<E extends Event> {
-  abstract queue: E["queue"];
+  abstract queue: string;
   protected connection: amqp.Connection;
+  private exchangeName = "twitter";
+  private exchangeType = "direct";
+  abstract bindingKey: E["bindingKey"];
+  abstract durable: boolean;
+
   abstract channel: amqp.Channel;
   abstract consumeCallBack(
     parsedContent: E["content"],
@@ -24,23 +32,32 @@ export abstract class Listener<E extends Event> {
     return parsedContent;
   }
 
-  async consumeFromQueue() {
+  consumeFromQueue() {
     const outerThis = this;
-    this.channel.assertQueue(this.queue);
-    this.channel.consume(this.queue, async function (message) {
-      if (message === null) {
-        console.log("consumer cancelled by server");
-      } else {
-        const parsedContent = outerThis.parseContent(message.content);
-        await outerThis.consumeCallBack(parsedContent, message);
-        outerThis.channel.ack(message);
-      }
+
+    this.channel.assertExchange(this.exchangeName, this.exchangeType, {
+      durable: this.durable,
     });
+    this.channel.assertQueue(this.queue);
+    this.channel.bindQueue(this.queue, this.exchangeName, this.bindingKey);
+
+    this.channel.consume(
+      this.queue,
+      async function (message) {
+        if (message === null) {
+          console.log("consumer cancelled by server");
+        } else {
+          const parsedContent = outerThis.parseContent(message.content);
+          await outerThis
+            .consumeCallBack(parsedContent, message)
+            .catch((err) => {
+              console.error(err);
+              return;
+            });
+          outerThis.channel.ack(message);
+        }
+      },
+      { noAck: false }
+    );
   }
 }
-
-// 最後希望這樣用
-// new xxxListener(connection,channel).consumeFromQueue(data=> {
-//   我自己的操作邏輯
-// }
-//})
