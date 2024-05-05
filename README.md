@@ -1,4 +1,187 @@
-# Simple Twitter API
+# Simple Twitter API Project Background
+
+This project is aimed at practicing Micro-service architecture. [Design documents can be viewed here](https://drive.google.com/file/d/1uQ2Ee18g5XAUbHyk2Tj3koIMb2xSQWhY/view?usp=sharing), make sure to open them with draw.io, as they contain the design flow for this project.
+
+[Test file records](https://docs.google.com/spreadsheets/d/1b6o0sJsoG7D1afKGW2jFwDmLbTK6MJdR0QmhvV3AjcU/edit?usp=sharing)
+
+## Project Predecessor
+
+Refactoring from the previous [Monolithic Simple Twitter API repo](https://github.com/JHIH-LEI/twitter-api-2020) , [live demo](https://tzynwang.github.io/simple-twitter-frontend/#/login).
+
+Before：
+<img width="766" alt="截圖 2022-11-08 下午2 59 47" src="https://user-images.githubusercontent.com/66233452/200496169-1fed58d3-c095-4db7-b971-651301f7e99e.png">
+
+After：
+![](https://i.imgur.com/QLcSoca.png)
+
+## Project Introduction：
+
+The choice of databases is based on service characteristics, including:
+
+* mysql
+* mongodb
+* redis: Records the subscriber list that behavior triggers need to notify.
+
+For future message function expansion, the frontend can use Firebase's real-time database, but regarding room issues, a redesign is still necessary.
+
+Because services are separated, there are data issues to address. Data synchronization utilizes asynchronous methods: Event Bus for handling. RabbitMQ is employed here. To manage concurrency issues, a version field is added to the data.
+
+
+![](https://i.imgur.com/ALDk5u1.png)
+
+In terms of event publishing, hooks are mainly utilized.
+
+To facilitate the management of different containers, Kubernetes is adopted. Detailed configuration files can be found in infra/k8s. CI/CD workflows will be implemented in the future.
+
+## Features
+
+(User authentication logic packaged into an npm package for use by each service)
+
+Frontend:
+
+* Users can create tweets, reply to tweets, and like tweets.
+* Users can follow/subscribe (similar to FB notifications) to other users.
+* Users can edit their profile (uploading background and profile pictures not yet implemented, hoping for future optimization to upload to specialized cloud storage services; originally relied on open-source services, as seen in the old project).
+* Notification system.
+
+![](https://i.imgur.com/AgOEaCq.png)
+
+
+Notify Server：
+
+![](https://i.imgur.com/FEfej46.png)
+
+
+![](https://i.imgur.com/OaLb6al.png)
+
+
+Backend: (Not implemented, done in the previous version)
+
+* Administrators can delete tweets.
+* Administrators can see all tweets.
+* Administrators can see all user data.
+
+## Project Startup
+
+### Step0: Download the Project
+
+Download the project to your local machine:
+```
+git clone https://github.com/JHIH-LEI/microservices-twitter-api-2022.git
+```
+Open Terminal and navigate to the folder where this project is stored:
+```
+cd micro-twitter-api-2022
+```
+
+
+### Step1: Configure Kubernetes Secret
+
+First, find secret.yaml.example and database-secret.yaml.example in infra/k8s. Remove the "example" from the filename and fill in the missing values (encrypted using base64).
+
+You can obtain the base64 value using the following command:
+
+```
+echo -n putValueHere | base64
+```
+
+### Step2: Modify the Hosts File to Map the Ingress Host to 127.0.0.1
+
+```
+cd ~
+```
+
+```
+cd /etc
+```
+
+```
+code hosts
+```
+
+Add: 
+
+127.0.0.1 twitter.dev
+
+After saving, a prompt will appear in the lower-right corner:
+![](https://i.imgur.com/EPMC7Os.png)
+Click "Retry," and it will prompt for a password to restart and apply the update.
+
+### Step3: Use Skaffold to Set Up Kubernetes
+
+Navigate to the root directory and run:
+
+```
+skaffold dev
+```
+
+Once you see the services listed as "listening on 3000" in the terminal, it means it's successful:
+
+![](https://i.imgur.com/JdPw9eE.png)
+![](https://i.imgur.com/0DjnjFV.png)
+
+Now, you can access our backend API service using twitter.dev!
+
+You can test it using Postman:
+![](https://i.imgur.com/qjdjvy6.png)
+
+
+### Other Startup Methods - Running Individual Services without Skaffold:
+We will use an .env file to set up the environment variables needed for each service. Please rename the .env.example file to .env under the src folder of the corresponding service and fill in the values.
+
+Start the server:
+```
+npm run dev
+```
+
+If you see the following message in the terminal, it means the server has been successfully established:
+
+```
+Example app listening on port 3000!
+```
+
+Run tests:
+```
+npm run test:ci
+```
+
+---
+### Additional Information: What to Do If You Encounter Errors When Using Skaffold Dev?
+
+Sometimes, simply restarting may resolve the issue, but it could also be due to a failed image pull. While Skaffold automates sync, build, test, and deploy, it requires predefined images to start the automation process.
+
+In this case, you can try building your own image and pushing it to Docker Hub for use. Remember to update the image name in the corresponding Kubernetes deployment.
+
+Detailed Instructions:
+
+First, navigate to each server to build the Docker image:
+
+```
+cd tweets
+docker build -t yourDocerId/imageName .
+```
+
+Push to Docker Hub
+
+```
+docker push yourDocerId/imageName
+```
+
+Update the image location in the corresponding Kubernetes deployment:
+
+![](https://i.imgur.com/1kX3aeV.png)
+
+
+Once everything is set up, return to the root directory and run:
+
+```
+skaffold dev
+```
+
+If you see each server successfully listening on port 3000 in the terminal without any error messages, everything is working fine.
+
+
+# 中文版本
 
 # 專案由來
 
@@ -31,11 +214,6 @@ After：
 
 
 ![](https://i.imgur.com/ALDk5u1.png)
-
-在event publish的部分多半是利用hook的方式處理。
-
-而為了方便管理不同容器採用了kubenete，詳細的設定檔可至infra/k8s查看，未來會在實作CICD的流程。
-
 
 # 功能
 （使用者驗證的邏輯打包成npm package讓每個服務都能用）
@@ -129,7 +307,6 @@ skaffold dev
 可以利用postman來做測試：
 
 ![](https://i.imgur.com/qjdjvy6.png)
-
 
 ## 其他啟動方式-- 不使用skaffold，獨立測試單個服務:
 
